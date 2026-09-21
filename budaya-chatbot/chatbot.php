@@ -1,5 +1,14 @@
 <?php
-require __DIR__ . '/config.php';
+
+$API_KEY = getenv('GEMINI_API_KEY');
+
+if (!$API_KEY) {
+    http_response_code(500);
+    echo json_encode([
+        "reply" => "Konfigurasi AI belum tersedia di server."
+    ]);
+    exit;
+}
 
 $model = "gemini-3.6-flash";
 $url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$API_KEY";
