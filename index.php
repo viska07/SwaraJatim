@@ -1,223 +1,1196 @@
+<?php
+include "koneksi.php";
+
+$kategori = [
+    1 => "Wisata",
+    2 => "Kuliner",
+    3 => "Pakaian",
+    4 => "Tradisi"
+];
+?>
+
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <title>Swara Jatim - Dari Jawa Timur, Untuk Nusantara</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
+
+    <link rel="stylesheet" href="navbar-footer.css">
+
     <style>
+
+        /* =========================================================
+           RESET & VARIABLES
+        ========================================================= */
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --bg: #f8f5ef;
+            --surface: #ffffff;
+            --surface-soft: #f2ede5;
+
+            --dark: #241b16;
+            --dark-soft: #3a2b23;
+
+            --brown: #6b4935;
+            --terracotta: #b85c38;
+            --gold: #c99a5b;
+
+            --text: #332a25;
+            --muted: #756b63;
+            --muted-light: #9b9087;
+
+            --border: #e5ddd3;
+
+            --radius-sm: 10px;
+            --radius-md: 18px;
+            --radius-lg: 28px;
+
+            --shadow-sm: 0 8px 25px rgba(36, 27, 22, 0.06);
+            --shadow-md: 0 16px 40px rgba(36, 27, 22, 0.10);
+
+            --max-width: 1240px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Georgia', serif;
-            background-color: #f5f1e8;
-            color: #333;
+            font-family: "DM Sans", sans-serif;
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.6;
-            background-color: #F8E1B7;
+            overflow-x: hidden;
         }
 
-        /* Header */
-        .header {
-            background-color: var(--secondary);
-            padding: 1.2rem 0;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        a {
+            color: inherit;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+
+        /* Navbar styles are loaded from navbar-footer.css */
+
+        /* =========================================================
+           HERO
+        ========================================================= */
+
+        .hero {
+            min-height: 100vh;
+
+            position: relative;
+
+            display: flex;
+            align-items: center;
+
+            background-image:
+                linear-gradient(
+                    90deg,
+                    rgba(20, 13, 9, 0.78) 0%,
+                    rgba(20, 13, 9, 0.52) 42%,
+                    rgba(20, 13, 9, 0.22) 100%
+                ),
+                url("Jembatan-Nasional-Suramadu.jpg");
+
+            background-size: cover;
+            background-position: center;
+
+            color: white;
+        }
+
+        .hero::after {
+            content: "";
+
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+
+            height: 130px;
+
+            background: linear-gradient(
+                to top,
+                var(--bg),
+                transparent
+            );
+
+            pointer-events: none;
+        }
+
+        .hero-content {
+            width: min(100% - 48px, var(--max-width));
+            margin: 78px auto 0;
+
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-text {
+            max-width: 680px;
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+
+            margin-bottom: 20px;
+
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+
+            color: #f1d8ad;
+        }
+
+        .hero-label::before {
+            content: "";
+
+            width: 30px;
+            height: 1px;
+
+            background: var(--gold);
+        }
+
+        .hero h1 {
+            font-family: "Playfair Display", serif;
+
+            font-size: clamp(3.5rem, 7vw, 6.8rem);
+            line-height: 0.95;
+
+            font-weight: 600;
+
+            margin-bottom: 24px;
+
+            letter-spacing: -2px;
+        }
+
+        .hero h1 span {
+            color: #e1b879;
+        }
+
+        .hero-description {
+            max-width: 580px;
+
+            color: rgba(255,255,255,0.82);
+
+            font-size: 1.08rem;
+            line-height: 1.8;
+
+            margin-bottom: 32px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .hero-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+
+            padding: 13px 20px;
+
+            border-radius: 10px;
+
+            text-decoration: none;
+
+            font-size: 0.9rem;
+            font-weight: 600;
+
+            transition: 0.3s ease;
+        }
+
+        .hero-button.primary {
+            background: var(--terracotta);
+            color: white;
+        }
+
+        .hero-button.primary:hover {
+            background: #a94e2e;
+            transform: translateY(-2px);
+        }
+
+        .hero-button.secondary {
+            background: rgba(255,255,255,0.10);
+            color: white;
+
+            border: 1px solid rgba(255,255,255,0.22);
+
             backdrop-filter: blur(10px);
-            background-color: rgba(44, 24, 16, 0.98);
         }
 
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
+        .hero-button.secondary:hover {
+            background: rgba(255,255,255,0.17);
+            transform: translateY(-2px);
+        }
+
+        .hero-scroll {
+            position: absolute;
+            z-index: 2;
+
+            bottom: 42px;
+            right: 48px;
+
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            color: rgba(255,255,255,0.72);
+
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hero-scroll i {
+            color: var(--gold);
+        }
+
+
+        /* =========================================================
+           GENERAL SECTION
+        ========================================================= */
+
+        .section {
+            width: min(100% - 48px, var(--max-width));
+            margin: auto;
+            padding: 65px 0;
+        }
+
+        .section-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-            gap: 2rem;
+            align-items: end;
+            gap: 30px;
+            margin-bottom: 25px;
         }
 
-        .logo {
-            font-size: 1.6rem;
+        .section-heading {
+            max-width: 680px;
+        }
+
+        .eyebrow {
+            display: block;
+
+            margin-bottom: 10px;
+
+            color: var(--terracotta);
+
+            font-size: 0.72rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--accent), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: #FFE1AF;
-            background-clip: text;
+
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .section-title {
+            font-family: "Playfair Display", serif;
+
+            color: var(--dark);
+
+            font-size: clamp(2rem, 4vw, 3rem);
+            line-height: 1.15;
+
+            font-weight: 600;
+        }
+
+        .section-subtitle {
+            margin-top: 12px;
+
+            color: var(--muted);
+
+            max-width: 650px;
+
+            font-size: 0.98rem;
+            line-height: 1.8;
+        }
+
+        .view-all {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
             text-decoration: none;
+
+            color: var(--brown);
+
+            font-size: 0.86rem;
+            font-weight: 600;
+
             white-space: nowrap;
-            letter-spacing: -0.5px;
+
+            transition: 0.25s ease;
         }
 
-        .logo a {
-            color: inherit;
+        .view-all:hover {
+            color: var(--terracotta);
+            gap: 12px;
+        }
+
+
+        /* =========================================================
+           CATEGORY INTRO
+        ========================================================= */
+
+        .category-intro {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 30px;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .category-intro-text {
+            max-width: 680px;
+        }
+
+        .category-intro-text p {
+            margin-top: 12px;
+
+            color: var(--muted);
+
+            font-size: 1rem;
+            line-height: 1.9;
+        }
+
+        .category-stat {
+            display: flex;
+            justify-content: flex-end;
+            gap: 38px;
+        }
+
+        .stat-item {
+            text-align: right;
+        }
+
+        .stat-number {
+            display: block;
+
+            color: var(--dark);
+
+            font-family: "Playfair Display", serif;
+            font-size: 2.2rem;
+            font-weight: 600;
+        }
+
+        .stat-label {
+            color: var(--muted-light);
+
+            font-size: 0.78rem;
+        }
+
+
+        /* =========================================================
+           GALLERY
+        ========================================================= */
+
+        .gallery-section {
+            background: var(--surface-soft);
+
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .gallery-inner {
+            width: min(100% - 48px, var(--max-width));
+            margin: auto;
+            padding: 65px 0;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        .gallery-link {
             text-decoration: none;
         }
 
-        .search-container {
-            flex: 1;
-            max-width: 400px;
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 0.8rem 1.5rem;
-            border: 1.5px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50px;
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-            font-size: 0.95rem;
-            font-family: inherit;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
-        }
-
-        .search-box::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .search-box:focus {
-            outline: none;
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(232, 168, 99, 0.3);
-        }
-
-        .nav-menu-wrapper {
-            display: flex;
-            flex-direction: row;
-            width: auto;
-            transition: max-height 0.3s ease;
-            overflow: hidden;
-            max-height: none;
-        }
-
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 2.5rem;
-            margin: 0;
-        }
-
-        .nav-menu a {
-            color: rgba(255, 255, 255, 0.85);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.3s ease;
+        .gallery-card {
             position: relative;
+            overflow: hidden;
+
+            min-height: 350px;
+
+            border-radius: var(--radius-md);
+
+            background: var(--dark);
+
+            box-shadow: var(--shadow-sm);
+
+            isolation: isolate;
+
+            transition: 0.4s ease;
         }
 
-        .nav-menu a::after {
-            content: '';
+        .gallery-card:hover {
+            transform: translateY(-7px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .gallery-image-wrapper {
             position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
-            transition: width 0.3s ease;
+            inset: 0;
+
+            overflow: hidden;
         }
 
-        .nav-menu a:hover {
-            color: white;
+        .gallery-image-wrapper::after {
+            content: "";
+
+            position: absolute;
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    to top,
+                    rgba(20, 13, 9, 0.9),
+                    rgba(20, 13, 9, 0.15) 65%,
+                    rgba(20, 13, 9, 0.05)
+                );
         }
 
-        .nav-menu a:hover::after {
+        .gallery-image-wrapper img {
             width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+
+            transition: transform 0.6s ease;
         }
 
-        .burger-menu {
-            display: none;
+        .gallery-card:hover img {
+            transform: scale(1.07);
+        }
+
+        .gallery-badge {
+            position: absolute;
+
+            top: 18px;
+            left: 18px;
+
+            z-index: 2;
+
+            padding: 7px 12px;
+
+            border-radius: 50px;
+
+            background: rgba(255,255,255,0.92);
+
+            color: var(--dark);
+
+            font-size: 0.68rem;
+            font-weight: 700;
+
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .gallery-content {
+            position: absolute;
+
+            left: 22px;
+            right: 22px;
+            bottom: 22px;
+
+            z-index: 2;
+        }
+
+        .gallery-content h3 {
+            color: white;
+
+            font-family: "Playfair Display", serif;
+
+            font-size: 1.45rem;
+            font-weight: 600;
+
+            margin-bottom: 7px;
+        }
+
+        .gallery-content p {
+            color: rgba(255,255,255,0.72);
+
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+
+        /* =========================================================
+           AI SECTION
+        ========================================================= */
+
+        .ai-section {
+            padding-top: 65px;
+            padding-bottom: 65px;
+        }
+
+        .ai-card {
+            display: grid;
+
+            grid-template-columns: 1fr 0.9fr;
+
+            min-height: 430px;
+
+            overflow: hidden;
+
+            border-radius: var(--radius-lg);
+
+            background: var(--dark);
+
+            color: white;
+
+            box-shadow: 0 25px 70px rgba(36, 27, 22, 0.16);
+        }
+
+        .ai-content {
+            padding: 65px;
+
+            display: flex;
             flex-direction: column;
-            background: none;
-            border: none;
-            cursor: pointer;
-            gap: 5px;
-            padding: 0.5rem;
-            z-index: 1001;
+            justify-content: center;
+
+            border-right: 1px solid rgba(255,255,255,0.08);
         }
 
-        .burger-menu span {
+        .ai-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            color: #dfbb7d;
+
+            font-size: 0.72rem;
+            font-weight: 700;
+
+            letter-spacing: 2px;
+            text-transform: uppercase;
+
+            margin-bottom: 18px;
+        }
+
+        .ai-label i {
+            font-size: 0.8rem;
+        }
+
+        .ai-title {
+            font-family: "Playfair Display", serif;
+
+            font-size: clamp(2.2rem, 4vw, 3.7rem);
+
+            line-height: 1.08;
+
+            font-weight: 600;
+
+            margin-bottom: 22px;
+        }
+
+        .ai-title span {
+            color: #d9af6c;
+        }
+
+        .ai-description {
+            max-width: 550px;
+
+            color: rgba(255,255,255,0.68);
+
+            font-size: 0.95rem;
+            line-height: 1.9;
+
+            margin-bottom: 30px;
+        }
+
+        .ai-feature-list {
+            list-style: none;
+
+            display: grid;
+            gap: 12px;
+
+            margin-bottom: 34px;
+        }
+
+        .ai-feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            color: rgba(255,255,255,0.78);
+
+            font-size: 0.84rem;
+        }
+
+        .ai-feature-list i {
             width: 25px;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 2px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 25px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: rgba(201,154,91,0.13);
+
+            color: #d9af6c;
+
+            font-size: 0.65rem;
         }
 
-        .burger-menu.active span:nth-child(1) {
-            transform: rotate(45deg) translate(10px, 10px);
+        .ai-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+
+            width: fit-content;
+
+            padding: 13px 20px;
+
+            border-radius: 10px;
+
+            background: #d09a4f;
+            color: #241b16;
+
+            text-decoration: none;
+
+            font-size: 0.86rem;
+            font-weight: 700;
+
+            transition: 0.3s ease;
         }
 
-        .burger-menu.active span:nth-child(2) {
-            opacity: 0;
+        .ai-button:hover {
+            background: #e0b26e;
+            transform: translateY(-2px);
         }
 
-        .burger-menu.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(8px, -8px);
+
+        /* AI PREVIEW */
+
+        .ai-preview {
+            padding: 45px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #30231c;
         }
 
-        /* Responsive burger menu for tablets and mobile -->
-        @media (max-width: 1024px) {
-            .nav-container {
-                padding: 0 1.5rem;
-                gap: 1.5rem;
+        .chat-preview {
+            width: 100%;
+            max-width: 430px;
+
+            padding: 18px;
+
+            border-radius: 20px;
+
+            background: #fffdf9;
+
+            box-shadow: 0 25px 55px rgba(0,0,0,0.25);
+        }
+
+        .chat-preview-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            padding-bottom: 15px;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        .bot-avatar {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            background: #ead8bd;
+
+            color: var(--brown);
+
+            font-size: 1rem;
+        }
+
+        .chat-preview-name strong {
+            display: block;
+
+            color: var(--dark);
+
+            font-size: 0.85rem;
+        }
+
+        .chat-preview-name span {
+            color: #8c8178;
+
+            font-size: 0.7rem;
+        }
+
+        .online-dot {
+            width: 7px;
+            height: 7px;
+
+            margin-left: auto;
+
+            border-radius: 50%;
+
+            background: #69a56f;
+
+            box-shadow: 0 0 0 4px rgba(105,165,111,0.12);
+        }
+
+        .chat-messages {
+            padding: 25px 5px;
+
+            display: grid;
+            gap: 14px;
+        }
+
+        .preview-message {
+            max-width: 82%;
+
+            padding: 12px 14px;
+
+            border-radius: 13px;
+
+            font-size: 0.76rem;
+            line-height: 1.6;
+        }
+
+        .preview-message.bot {
+            background: #f1ece5;
+            color: var(--text);
+
+            border-bottom-left-radius: 4px;
+        }
+
+        .preview-message.user {
+            margin-left: auto;
+
+            background: var(--terracotta);
+            color: white;
+
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-preview-input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 7px;
+
+            border: 1px solid var(--border);
+            border-radius: 11px;
+        }
+
+        .chat-preview-input span {
+            flex: 1;
+
+            padding-left: 7px;
+
+            color: #a0968d;
+
+            font-size: 0.72rem;
+        }
+
+        .chat-preview-input button {
+            width: 32px;
+            height: 32px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: var(--terracotta);
+            color: white;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================================================
+           CONTENT SECTIONS
+        ========================================================= */
+
+        .content-section {
+            padding-top: 55px;
+            padding-bottom: 55px;
+        }
+
+        .content-section:nth-of-type(even) {
+            background: #f1ebe2;
+        }
+
+        .content-grid {
+            display: grid;
+
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+
+            gap: 20px;
+        }
+
+        .content-card {
+            overflow: hidden;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+
+            box-shadow: 0 5px 18px rgba(36,27,22,0.04);
+
+            transition: 0.35s ease;
+        }
+
+        .content-card:hover {
+            transform: translateY(-6px);
+
+            box-shadow: var(--shadow-md);
+
+            border-color: #d7c9b9;
+        }
+
+        .content-image {
+            width: 100%;
+            height: 220px;
+
+            object-fit: cover;
+
+            display: block;
+
+            transition: 0.5s ease;
+        }
+
+        .content-card:hover .content-image {
+            transform: scale(1.04);
+        }
+
+        .content-image-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .location-badge {
+            position: absolute;
+
+            left: 14px;
+            bottom: 14px;
+
+            padding: 6px 10px;
+
+            border-radius: 50px;
+
+            background: rgba(36,27,22,0.85);
+            color: white;
+
+            font-size: 0.68rem;
+            font-weight: 600;
+
+            backdrop-filter: blur(8px);
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-content h4 {
+            color: var(--dark);
+
+            font-family: "Playfair Display", serif;
+
+            font-size: 1.18rem;
+            font-weight: 600;
+
+            line-height: 1.35;
+
+            margin-bottom: 7px;
+        }
+
+        .card-content p {
+            color: var(--muted);
+
+            font-size: 0.8rem;
+        }
+
+        .card-arrow {
+            margin-top: 16px;
+
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            color: var(--terracotta);
+
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+
+        /* =========================================================
+           MINI GAME CTA
+        ========================================================= */
+
+        .game-section {
+            padding: 85px 0;
+        }
+
+        .game-card {
+            position: relative;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 40px;
+
+            padding: 48px 55px;
+
+            border-radius: var(--radius-lg);
+
+            background: #e8dac5;
+
+            overflow: hidden;
+        }
+
+        .game-card::after {
+            content: "✦";
+
+            position: absolute;
+
+            right: 45px;
+            top: -20px;
+
+            color: rgba(107,73,53,0.08);
+
+            font-size: 13rem;
+        }
+
+        .game-content {
+            position: relative;
+            z-index: 2;
+
+            max-width: 700px;
+        }
+
+        .game-content .eyebrow {
+            color: var(--brown);
+        }
+
+        .game-title {
+            font-family: "Playfair Display", serif;
+
+            color: var(--dark);
+
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+
+            line-height: 1.15;
+
+            margin-bottom: 12px;
+        }
+
+        .game-description {
+            color: var(--muted);
+
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .game-button {
+            position: relative;
+            z-index: 2;
+
+            flex-shrink: 0;
+
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+
+            padding: 13px 20px;
+
+            border-radius: 10px;
+
+            background: var(--dark);
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 0.84rem;
+            font-weight: 600;
+
+            transition: 0.3s ease;
+        }
+
+        .game-button:hover {
+            background: var(--terracotta);
+            transform: translateY(-2px);
+        }
+
+
+        /* Footer styles are loaded from navbar-footer.css */
+
+        /* =========================================================
+           SEARCH EMPTY STATE
+        ========================================================= */
+
+        .search-empty {
+            display: none;
+
+            margin-top: 20px;
+            padding: 25px;
+
+            text-align: center;
+
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-md);
+
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+
+        /* =========================================================
+           ANIMATION
+        ========================================================= */
+
+        .fade-up {
+            animation: fadeUp 0.8s ease both;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
             }
 
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        @media (max-width: 768px) {
+
+        /* =========================================================
+           RESPONSIVE - 1100px
+        ========================================================= */
+
+        @media (max-width: 1100px) {
+
+            .nav-container {
+                gap: 18px;
+            }
+
+            .nav-menu {
+                gap: 18px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .ai-content {
+                padding: 50px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1.3fr 1fr 1fr;
+            }
+
+            .footer-contact {
+                grid-column: 1 / -1;
+            }
+        }
+
+
+        /* =========================================================
+           RESPONSIVE - 850px
+        ========================================================= */
+
+        @media (max-width: 850px) {
+
+            .nav-container {
+                height: 70px;
+            }
+
+            .search-container {
+                display: none;
+            }
+
             .burger-menu {
                 display: flex;
             }
 
-            .search-container {
-                max-width: 250px;
-            }
-
-            .nav-container {
-                flex-wrap: wrap;
-                gap: 1rem;
-            }
-
             .nav-menu-wrapper {
                 position: absolute;
+
                 top: 70px;
                 left: 0;
                 right: 0;
-                background: rgba(44, 24, 16, 0.98);
-                flex-direction: column;
+
+                display: block;
+
                 max-height: 0;
+
                 overflow: hidden;
-                transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                padding: 0;
-                width: 100%;
-                backdrop-filter: blur(10px);
+
+                background: rgba(36,27,22,0.98);
+
+                border-bottom: 1px solid rgba(255,255,255,0.08);
+
+                transition: max-height 0.35s ease;
             }
 
             .nav-menu-wrapper.active {
-                max-height: 500px;
-                padding: 1.5rem 0;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+                max-height: 420px;
             }
 
             .nav-menu {
                 flex-direction: column;
+                align-items: stretch;
+
                 gap: 0;
-                padding: 0 2rem;
+
+                padding: 10px 24px 20px;
             }
 
             .nav-menu li {
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                padding: 1rem 0;
+                border-bottom: 1px solid rgba(255,255,255,0.07);
             }
 
             .nav-menu li:last-child {
@@ -226,1340 +1199,619 @@
 
             .nav-menu a {
                 display: block;
-                font-size: 0.95rem;
+
+                padding: 15px 0;
             }
 
-        }
-
-        @media (max-width: 640px) {
-            .burger-menu {
-                display: flex;
+            .nav-menu a::after {
+                display: none;
             }
 
-            .burger-menu span {
-                width: 22px;
-                height: 2.5px;
-            }
-
-            .nav-menu-wrapper {
-                top: 65px;
-            }
-
-            .nav-menu {
-                padding: 0 1.5rem;
-            }
-
-        }
-
-        @media (max-width: 480px) {
-            .burger-menu {
-                display: flex;
-            }
-
-            .burger-menu span {
-                width: 20px;
-                height: 2px;
-            }
-
-            .nav-menu-wrapper.active {
-                max-height: 400px;
-            }
-
-            .nav-menu {
-                padding: 0 1rem;
-            }
-
-            .nav-menu li {
-                padding: 0.8rem 0;
-            }
-
-        }
-
-        @media (max-width: 360px) {
-            .burger-menu {
-                display: flex;
-            }
-
-        }
-
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            background: 
-                linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
-                url('Jembatan-Nasional-Suramadu.jpg');
-            background-size: cover;
-            background-position: bottom;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            overflow: hidden;
-        }
-
-        /* Judul */
-        .hero-content h1 {
-            font-size: 4.2rem;
-            margin-bottom: 1rem;
-            text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-            animation: fadeInUp 1s ease-out;
-            font-weight: 700;
-        }
-
-        /* Subjudul */
-        .hero-content p {
-            font-size: 2.2rem;
-            font-weight: 400;
-            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.55);
-            animation: fadeInUp 1s ease-out 0.3s both;
-        }
-
-        /* Animation */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        /* Section Styles */
-        .section {
-            padding: 4rem 0;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-left: 2rem;
-            padding-right: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .section-title {
-            position: relative;
-            text-align: center;
-            font-size: 2.5rem;
-            color: #994D1C;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 3rem 1rem;
-            border-bottom: 3px solid #d2691e;
-            padding-bottom: 1rem;
-            background: linear-gradient(45deg, #994D1C, #d2691e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Gallery Section */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 4rem 2rem;
-        }
-
-        /* ===== CATEGORY SECTION ===== */
-        .category-section {
-            margin-bottom: 5rem;
-        }
-
-        .section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            color: var(--primary-dark);
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        .section-subtitle {
-            color: var(--neutral-500);
-            font-size: 1.1rem;
-            margin-bottom: 3rem;
-            font-weight: 300;
-        }
-
-        .category-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .category-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid rgba(0, 0, 0, 0.04);
-        }
-
-        .category-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
-        }
-
-        .category-icon {
-            font-size: 4rem;
-            text-align: center;
-            padding: 2rem;
-            background: linear-gradient(135deg, rgba(200, 90, 23, 0.1), rgba(232, 168, 99, 0.1));
-            min-height: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .category-card-content {
-            padding: 2rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .category-card-content h3 {
-            color: var(--primary-dark);
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.8rem;
-            font-family: 'Playfair Display', serif;
-        }
-
-        .category-card-content p {
-            color: var(--neutral-500);
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-            flex: 1;
-        }
-
-        .category-badge {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            padding: 0.4rem 1.2rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            width: fit-content;
-        }
-
-        /* Modern gallery with optimized spacing */
-        .gallery-section {
-            background: linear-gradient(135deg, #F8E1B7 0%, #fef5e7 100%);
-            padding: 3.5rem 3rem;
-            margin: auto;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
-            max-width: 1400px;
-        }
-
-        .gallery-header {
-            margin-top: 40px;
-            margin-bottom: 3rem;
-            text-align: center;
-        }
-
-        .gallery-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            color: #994D1C;
-            margin-bottom: 0.8rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .gallery-subtitle {
-            color: #8b5a2b;
-            font-size: 1.1rem;
-            font-weight: 400;
-        }
-
-        /* Modern grid with better spacing balance */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1.8rem;
-            padding: 0;
-        }
-
-        .gallery-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            transform-origin: center;
-        }
-
-        .gallery-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
-        }
-
-        .gallery-image-wrapper {
-            width: 100%;
-            height: 220px;
-            overflow: hidden;
-            position: relative;
-            background: linear-gradient(135deg, #e8d7c3, #f0e6d2);
-        }
-
-        .gallery-image-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .gallery-card:hover .gallery-image-wrapper img {
-            transform: scale(1.08);
-        }
-
-        .gallery-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: linear-gradient(135deg, #c87a2b, #e8a863);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            box-shadow: 0 4px 12px rgba(200, 90, 23, 0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        .gallery-content {
-            padding: 1.4rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .gallery-content h3 {
-            color: #2c1810;
-            margin-bottom: 0.5rem;
-            font-size: 1.15rem;
-            line-height: 1.3;
-            font-weight: 600;
-            font-family: 'Playfair Display', serif;
-        }
-
-        .gallery-content p {
-            color: #666;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            flex: 1;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* AI Assistant Section - Modern gradient design with premium styling */
-        .ai-assistant {
-            background: linear-gradient(135deg, #2c1810 0%, #5c3d2e 50%, #8b5a3c 100%);
-            color: white;
-            padding: 4rem 3rem;
-            border-radius: 24px;
-            margin: 4rem 0;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-            box-shadow: 0 20px 60px rgba(44, 24, 16, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .ai-assistant::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, rgba(232, 168, 99, 0.1), transparent, rgba(200, 90, 23, 0.05));
-            pointer-events: none;
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes shimmer {
-            0%, 100% {
-                opacity: 0.5;
-            }
-            50% {
-                opacity: 1;
-            }
-        }
-
-        .ai-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .ai-content h3 {
-            font-size: 2.8rem;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #FFE1AF, #fff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 700;
-            letter-spacing: -1px;
-        }
-
-        .ai-content p {
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
-            font-size: 1.05rem;
-            color: rgba(255, 255, 255, 0.9);
-            letter-spacing: 0.3px;
-        }
-
-        .ai-buttons {
-            display: flex;
-            gap: 1.2rem;
-            margin-top: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .ai-btn {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
-            color: white;
-            border: 1.5px solid rgba(255, 255, 255, 0.3);
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9rem;
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .ai-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .ai-btn:hover::before {
-            left: 100%;
-        }
-
-        .ai-btn:hover {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(232, 168, 99, 0.15));
-            border-color: #FFE1AF;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(232, 168, 99, 0.3);
-        }
-
-        .chat-interface {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 225, 183, 0.5));
-            border-radius: 20px;
-            padding: 2rem;
-            height: 380px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            z-index: 2;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
-
-        .chat-interface:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.6);
-        }
-
-        .chat-header {
-            background: linear-gradient(135deg, #e8a863, #c87a2b);
-            color: white;
-            padding: 1.2rem;
-            border-radius: 14px;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-            font-size: 1.2rem;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 15px rgba(200, 90, 23, 0.2);
-        }
-
-        .chat-content-area {
-            flex: 1;
-            background: linear-gradient(135deg, rgba(248, 225, 183, 0.3), rgba(255, 255, 255, 0.2));
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(44, 24, 16, 0.5);
-            font-style: italic;
-            font-size: 0.95rem;
-            padding: 1rem;
-            text-align: center;
-            border: 1.5px dashed rgba(200, 90, 23, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .chat-interface:hover .chat-content-area {
-            border-color: rgba(200, 90, 23, 0.4);
-            background: linear-gradient(135deg, rgba(248, 225, 183, 0.5), rgba(255, 255, 255, 0.3));
-        }
-
-        .chat-input {
-            display: flex;
-            gap: 0.8rem;
-        }
-
-        .chat-input input {
-            flex: 1;
-            padding: 0.9rem 1rem;
-            border: 1.5px solid rgba(200, 90, 23, 0.2);
-            border-radius: 10px;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            background: white;
-            color: #333;
-            font-family: inherit;
-        }
-
-        .chat-input input:focus {
-            outline: none;
-            border-color: #e8a863;
-            box-shadow: 0 0 12px rgba(232, 168, 99, 0.2);
-        }
-
-        .chat-input button {
-            background: linear-gradient(135deg, #e8a863, #c87a2b);
-            color: white;
-            border: none;
-            padding: 0.9rem 1.2rem;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.1rem;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(200, 90, 23, 0.2);
-        }
-
-        .chat-input button:hover {
-            background: linear-gradient(135deg, #f0b968, #d4883a);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(200, 90, 23, 0.3);
-        }
-
-        .chat-input button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Content Grid */
-        .content-grid {
-            display: flex;
-            gap: 2rem;
-            overflow-x: auto;
-            padding: 15px;
-            scroll-behavior: smooth;
-        }
-
-        .content-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            min-width: 280px;
-            flex: 0 0 auto;
-        }
-
-        .content-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .content-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .content-card:hover img {
-            transform: scale(1.05);
-        }
-
-        .card-content {
-            padding: 1.5rem;
-        }
-
-        .card-content h4 {
-            color: #8b4513;
-            margin-bottom: 0.8rem;
-            font-size: 1.2rem;
-            line-height: 1.4;
-        }
-
-        .card-content p {
-            font-size: 1rem;
-            color: #666;
-            font-weight: 500;
-        }
-
-        .connection-section {
-            background: linear-gradient(135deg, #2c1810, #3d2317);
-            color: white;
-            padding: 4rem 0;
-            margin: 4rem 0;
-        }
-
-        .connection-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-        }
-
-        .connection-card {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .connection-card:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-5px);
-        }
-
-        .connection-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .connection-card h4 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: #f5f1e8;
-        }
-
-        .connection-card p {
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-
-        .connection-btn {
-            background: #8b4513;
-            color: white;
-            padding: 0.8rem 2rem;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            font-weight: bold;
-        }
-
-        .connection-btn:hover {
-            background: #a0522d;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .footer {
-            background: linear-gradient(135deg, #2c1810, #1a0f0a);
-            color: white;
-            padding: 4rem 0 1rem;
-            margin-top: 0;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-        }
-
-        .footer-section h4 {
-            color: #f5f1e8;
-            margin-bottom: 1.5rem;
-            font-size: 1.3rem;
-            border-bottom: 2px solid #8b4513;
-            padding-bottom: 0.5rem;
-        }
-
-        .footer-section p,
-        .footer-section a {
-            color: #ccc;
-            text-decoration: none;
-            margin-bottom: 0.8rem;
-            display: block;
-            transition: color 0.3s ease;
-            line-height: 1.6;
-        }
-
-        .footer-section a:hover {
-            color: #f5f1e8;
-            padding-left: 5px;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .social-links a {
-            background: linear-gradient(135deg, #8b4513, #a0522d);
-            color: white;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: bold;
-        }
-
-        .social-links a:hover {
-            background: linear-gradient(135deg, #a0522d, #d2691e);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid #444;
-            margin-top: 3rem;
-            color: #999;
-            font-size: 1rem;
-        }
-
-        /* Comprehensive responsive design for all breakpoints */
-        @media (max-width: 1024px) {
-            .nav-container {
-                padding: 0 1.5rem;
-                gap: 1.5rem;
-            }
-
-            .ai-assistant {
-                padding: 3rem 2.5rem;
-                gap: 2.5rem;
-            }
-
-            .ai-content h3 {
-                font-size: 2.2rem;
-            }
-
-            .chat-interface {
-                height: 340px;
-            }
-
-            .gallery-grid {
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-                gap: 1.5rem;
-            }
-
-            .gallery-title {
-                font-size: 2.5rem;
-            }
-
-            .section-title {
-                font-size: 2rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .hero-content h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero-content p {
-                font-size: 1.5rem;
-            }
-
-            .ai-assistant {
+            .category-intro {
                 grid-template-columns: 1fr;
-                padding: 2.5rem 2rem;
-                gap: 2rem;
+                gap: 25px;
             }
 
-            .ai-content h3 {
-                font-size: 1.8rem;
-                text-align: center;
+            .category-stat {
+                justify-content: flex-start;
             }
 
-            .ai-content p {
-                font-size: 0.95rem;
-                text-align: center;
+            .stat-item {
+                text-align: left;
             }
 
-            .ai-buttons {
-                justify-content: center;
-                gap: 1rem;
-            }
-
-            .chat-interface {
-                height: auto;
-                min-height: 300px;
-            }
-
-            .nav-menu {
-                gap: 1.2rem;
-                font-size: 0.9rem;
-            }
-
-            .section {
-                padding: 3rem 1.5rem;
-                margin-bottom: 3rem;
-            }
-
-            .search-container {
-                max-width: 250px;
-            }
-
-            .nav-container {
-                flex-wrap: wrap;
-                gap: 1rem;
-            }
-
-            .connection-container {
+            .ai-card {
                 grid-template-columns: 1fr;
             }
 
-            .gallery-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 1.2rem;
-            }
-
-            .gallery-section {
-                padding: 2.5rem 2rem;
-                margin: 2rem auto;
-            }
-
-            .gallery-title {
-                font-size: 2rem;
-            }
-
-            .gallery-subtitle {
-                font-size: 1rem;
-            }
-
-            .section-title {
-                font-size: 1.6rem;
-                margin: 2rem 0.5rem;
+            .ai-content {
+                border-right: none;
+                border-bottom: 1px solid rgba(255,255,255,0.08);
             }
 
             .content-grid {
-                gap: 1.5rem;
-                padding: 10px;
+                grid-template-columns: repeat(2, 1fr);
             }
 
-            .footer-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .ai-assistant {
-                padding: 2rem 1.5rem;
-                gap: 1.5rem;
-                border-radius: 16px;
-            }
-
-            .ai-content h3 {
-                font-size: 1.4rem;
-                margin-bottom: 1rem;
-            }
-
-            .ai-content p {
-                font-size: 0.9rem;
-                line-height: 1.6;
-            }
-
-            .ai-buttons {
+            .game-card {
                 flex-direction: column;
-                gap: 0.8rem;
-                margin-top: 1.5rem;
-            }
-
-            .ai-btn {
-                width: 100%;
-                padding: 0.85rem 1.5rem;
-                font-size: 0.85rem;
-                letter-spacing: 0.5px;
-            }
-
-            .chat-interface {
-                height: 280px;
-                padding: 1.5rem;
-            }
-
-            .chat-header {
-                font-size: 1rem;
-                padding: 0.9rem;
-                margin-bottom: 0.9rem;
-            }
-
-            .chat-content-area {
-                font-size: 0.9rem;
-                padding: 0.9rem;
-                margin-bottom: 0.9rem;
-            }
-
-            .chat-input input {
-                padding: 0.7rem 0.8rem;
-                font-size: 0.9rem;
-            }
-
-            .chat-input button {
-                padding: 0.7rem 0.9rem;
-                font-size: 1rem;
-            }
-
-            .hero-content h1 {
-                font-size: 2rem;
-            }
-
-            .hero-content p {
-                font-size: 1.2rem;
-            }
-
-            .gallery-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-                gap: 1rem;
-            }
-
-            .gallery-image-wrapper {
-                height: 180px;
-            }
-
-            .gallery-content {
-                padding: 1.2rem;
-            }
-
-            .gallery-content h3 {
-                font-size: 1rem;
-            }
-
-            .gallery-title {
-                font-size: 1.6rem;
-            }
-
-            .gallery-section {
-                padding: 2rem 1.5rem;
-            }
-
-            .nav-menu {
-                gap: 0.8rem;
-                font-size: 0.8rem;
-            }
-
-            .logo {
-                font-size: 1.2rem;
-            }
-
-            .search-container {
-                max-width: 100%;
-                margin: 0.5rem 0;
-                width: 100%;
-            }
-
-            .search-box {
-                width: 100%;
-                padding: 0.6rem 1rem;
-                font-size: 0.8rem;
-            }
-
-            .nav-container {
-                padding: 0 1rem;
-                gap: 0.8rem;
-            }
-
-            .section-title {
-                font-size: 1.3rem;
-                letter-spacing: 1px;
-                margin: 1.5rem 0.5rem;
-            }
-
-            .content-grid {
-                gap: 0.8rem;
-                padding: 8px;
-            }
-
-            .connection-container {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-                padding: 0 1rem;
+                align-items: flex-start;
             }
 
             .footer-content {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-                padding: 0 1rem;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 40px;
+            }
+
+            .footer-brand {
+                grid-column: 1 / -1;
+            }
+
+            .footer-contact {
+                grid-column: auto;
             }
         }
 
-        @media (max-width: 480px) {
-            .ai-assistant {
-                padding: 1.5rem 1rem;
-                gap: 1.5rem;
-                margin: 2rem 0;
-                border-radius: 12px;
+
+        /* =========================================================
+           RESPONSIVE - 600px
+        ========================================================= */
+
+        @media (max-width: 600px) {
+
+            .nav-container,
+            .hero-content,
+            .section,
+            .gallery-inner,
+            .footer-content,
+            .footer-bottom {
+                width: min(100% - 32px, var(--max-width));
             }
 
-            .ai-content h3 {
-                font-size: 1.3rem;
-                margin-bottom: 0.8rem;
+            .hero {
+                min-height: 780px;
+
+                background-position: 62% center;
             }
 
-            .ai-content p {
-                font-size: 0.85rem;
-                line-height: 1.5;
+            .hero-content {
+                margin-top: 70px;
             }
 
-            .ai-buttons {
+            .hero h1 {
+                font-size: 3.6rem;
+                letter-spacing: -1.5px;
+            }
+
+            .hero-description {
+                font-size: 0.92rem;
+                line-height: 1.7;
+            }
+
+            .hero-scroll {
+                display: none;
+            }
+
+            .section,
+            .gallery-inner {
+                padding: 70px 0;
+            }
+
+            .section-header {
+                align-items: flex-start;
                 flex-direction: column;
-                gap: 0.6rem;
-                margin-top: 1rem;
-            }
 
-            .ai-btn {
-                width: 100%;
-                padding: 0.8rem 1rem;
-                font-size: 0.8rem;
-                letter-spacing: 0px;
-                border-radius: 20px;
-            }
-
-            .chat-interface {
-                height: 260px;
-                padding: 1rem;
-            }
-
-            .chat-header {
-                font-size: 0.95rem;
-                padding: 0.8rem;
-                margin-bottom: 0.8rem;
-            }
-
-            .chat-content-area {
-                font-size: 0.85rem;
-                padding: 0.8rem;
-                margin-bottom: 0.8rem;
-            }
-
-            .chat-input {
-                gap: 0.4rem;
-            }
-
-            .chat-input input {
-                padding: 0.6rem;
-                font-size: 0.8rem;
-            }
-
-            .chat-input button {
-                padding: 0.6rem 0.7rem;
-                font-size: 0.95rem;
-            }
-
-            .hero-content h1 {
-                font-size: 1.8rem;
-                margin-bottom: 0.8rem;
-            }
-
-            .hero-content p {
-                font-size: 1.1rem;
-            }
-
-            .nav-menu {
-                gap: 0.6rem;
-                font-size: 0.75rem;
-            }
-
-            .logo {
-                font-size: 1rem;
-            }
-
-            .section {
-                padding: 2rem 1rem;
-                margin-bottom: 2rem;
+                margin-bottom: 28px;
             }
 
             .gallery-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
             }
 
-            .gallery-image-wrapper {
-                height: 160px;
+            .gallery-card {
+                min-height: 360px;
             }
 
-            .gallery-title {
-                font-size: 1.4rem;
+            .category-stat {
+                gap: 28px;
             }
 
-            .gallery-subtitle {
-                font-size: 0.9rem;
+            .stat-number {
+                font-size: 1.8rem;
             }
 
-            .gallery-section {
-                padding: 1.5rem 1rem;
-                margin: 1.5rem 0;
+            .ai-content {
+                padding: 38px 26px;
             }
 
-            .gallery-header {
-                margin-bottom: 1.5rem;
+            .ai-preview {
+                padding: 25px;
             }
 
-            .section-title {
-                font-size: 1.2rem;
-                letter-spacing: 0px;
-                margin: 1rem 0.5rem;
+            .chat-preview {
+                padding: 14px;
             }
 
             .content-grid {
-                gap: 0.8rem;
-                padding: 8px;
+                grid-template-columns: 1fr;
             }
 
-            .content-card {
-                min-width: 100%;
+            .content-image {
+                height: 230px;
             }
 
-            .connection-container {
-                gap: 1rem;
-                padding: 0 0.8rem;
+            .game-card {
+                padding: 35px 25px;
             }
 
             .footer-content {
-                gap: 1rem;
-                padding: 0 0.8rem;
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            .footer-brand,
+            .footer-contact {
+                grid-column: auto;
+            }
+
+            .footer-bottom {
+                align-items: flex-start;
+                flex-direction: column;
             }
         }
 
-        @media (max-width: 360px) {
-            .ai-assistant {
-                padding: 1rem 0.8rem;
-                gap: 1rem;
-                margin: 1.5rem 0;
+
+        /* =========================================================
+           RESPONSIVE - 400px
+        ========================================================= */
+
+        @media (max-width: 400px) {
+
+            .hero h1 {
+                font-size: 3rem;
             }
 
-            .ai-content h3 {
-                font-size: 1.1rem;
-                margin-bottom: 0.6rem;
+            .hero-button {
+                width: 100%;
             }
 
-            .ai-content p {
-                font-size: 0.8rem;
-                line-height: 1.4;
+            .hero-actions {
+                width: 100%;
             }
 
-            .ai-btn {
-                font-size: 0.75rem;
-                padding: 0.7rem 0.9rem;
+            .ai-content {
+                padding: 32px 22px;
             }
 
-            .chat-interface {
-                height: 240px;
-                padding: 0.8rem;
+            .ai-preview {
+                padding: 18px;
             }
 
-            .chat-header {
-                font-size: 0.9rem;
-                padding: 0.6rem;
+            .gallery-card {
+                min-height: 330px;
             }
 
-            .chat-content-area {
-                font-size: 0.8rem;
-                padding: 0.6rem;
-            }
-
-            .chat-input input {
-                padding: 0.5rem;
-                font-size: 0.75rem;
-            }
-
-            .chat-input button {
-                padding: 0.5rem;
-                font-size: 0.9rem;
-            }
-
-            .hero-content h1 {
-                font-size: 1.5rem;
-            }
-
-            .hero-content p {
-                font-size: 0.95rem;
-            }
-
-            .logo {
-                font-size: 0.9rem;
-            }
-
-            .section-title {
-                font-size: 1rem;
-            }
-
-            .gallery-grid {
-                gap: 0.8rem;
-            }
-
-            .gallery-title {
-                font-size: 1.2rem;
-            }
-
-            .gallery-subtitle {
-                font-size: 0.8rem;
+            .game-card {
+                padding: 30px 20px;
             }
         }
+
     </style>
 </head>
 
-<body>
-    <header class="header">
-        <div class="nav-container">
-            <div class="logo"><a href="index.php">Swara Jatim</a></div>
 
-            <div class="search-container">
-                <input type="text" id="searchInput" class="search-box" placeholder="Cari artikel...">
+<body>
+
+
+<?php include 'navbar.php'; ?>
+
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
+<section class="hero" id="home">
+
+    <div class="hero-content">
+
+        <div class="hero-text fade-up">
+
+            <div class="hero-label">
+                Warisan Jawa Timur
             </div>
 
-            <!-- Added burger menu icon for mobile -->
-            <button class="burger-menu" id="burgerMenu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+            <h1>
+                Swara<br>
+                <span>Jatim.</span>
+            </h1>
 
-            <!-- Nav menu now has mobile toggle functionality -->
-            <nav class="nav-menu-wrapper">
-                <ul class="nav-menu" id="navMenu">
-                    <li><a href="index.php">Home</a></li>
-                    <li><a href="index.php#galeri">Galeri</a></li>
-                    <li><a href="index.php#ai-assistant">Swara Jatim AI</a></li>
-                    <li><a href="mini-game.php">Mini Game</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+            <p class="hero-description">
+                Dari tradisi yang diwariskan turun-temurun,
+                rasa yang menjadi identitas, hingga cerita di
+                balik setiap tempat dan kesenian.
+                Mari mengenal kekayaan Jawa Timur dengan cara
+                yang lebih dekat dan modern.
+            </p>
 
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <h1>Swara Jatim</h1>
-            <p>Dari Jawa Timur, Untuk Nusantara</p>
-        </div>
-    </section>
+            <div class="hero-actions">
 
-    <!-- Gallery Section -->
-    <section id="galeri" class="gallery-section">
-        <div class="gallery-header">
-            <h2 class="gallery-title">Galeri Terbaru</h2>
-            <p class="gallery-subtitle">Jelajahi koleksi gambar terbaru dari setiap kategori</p>
+                <a href="#galeri" class="hero-button primary">
+                    Jelajahi Budaya
+                    <i class="fa-solid fa-arrow-down"></i>
+                </a>
+
+                <a href="#ai-assistant" class="hero-button secondary">
+                    Kenali dengan AI
+                    <i class="fa-solid fa-sparkles"></i>
+                </a>
+
+            </div>
+
         </div>
+
+    </div>
+
+
+    <div class="hero-scroll">
+        Scroll untuk menjelajah
+        <i class="fa-solid fa-arrow-down"></i>
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     INTRODUCTION
+========================================================= -->
+
+<section class="section">
+
+    <div class="category-intro">
+
+        <div class="category-intro-text">
+
+            <span class="eyebrow">
+                Eksplorasi
+            </span>
+
+            <h2 class="section-title">
+                Mengenal Jawa Timur<br>
+                lebih dekat.
+            </h2>
+
+            <p>
+                Swara Jatim menghadirkan ruang digital untuk
+                mengenal berbagai sisi budaya Jawa Timur,
+                mulai dari destinasi, kuliner, pakaian,
+                hingga tradisi yang masih hidup di tengah
+                masyarakat.
+            </p>
+
+        </div>
+
+
+        <div class="category-stat">
+
+            <div class="stat-item">
+
+                <span class="stat-number">
+                    04
+                </span>
+
+                <span class="stat-label">
+                    Kategori Budaya
+                </span>
+
+            </div>
+
+
+            <div class="stat-item">
+
+                <span class="stat-number">
+                    ∞
+                </span>
+
+                <span class="stat-label">
+                    Cerita untuk Dijelajahi
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     GALLERY
+========================================================= -->
+
+<section class="gallery-section" id="galeri">
+
+    <div class="gallery-inner">
+
+        <div class="section-header">
+
+            <div class="section-heading">
+
+                <span class="eyebrow">
+                    Galeri
+                </span>
+
+                <h2 class="section-title">
+                    Temukan sisi lain<br>
+                    Jawa Timur.
+                </h2>
+
+                <p class="section-subtitle">
+                    Jelajahi koleksi budaya berdasarkan kategori
+                    yang ingin kamu kenali.
+                </p>
+
+            </div>
+
+        </div>
+
 
         <div class="gallery-grid">
+
             <?php
-            include "koneksi.php";
-            $kategori = [
-                1 => "Wisata",
-                2 => "Kuliner",
-                3 => "Pakaian",
-                4 => "Tradisi"
-            ];
 
             foreach ($kategori as $cat_id => $judul_custom) {
+
                 $sql = "SELECT * FROM konten
                         WHERE category_id = $cat_id
                         ORDER BY id DESC
                         LIMIT 1";
+
                 $result = mysqli_query($koneksi, $sql);
 
                 if ($row = mysqli_fetch_assoc($result)) {
+
+                    $description = isset($row['description'])
+                        ? substr(strip_tags($row['description']), 0, 110) . '...'
+                        : 'Jelajahi koleksi ' . $judul_custom . ' Jawa Timur.';
+
                     ?>
-                    <a href="galeri.php?id=<?php echo $cat_id; ?>" class="gallery-link" style="text-decoration: none;">
-                        <div class="gallery-card">
+
+                    <a
+                        href="galeri.php?id=<?php echo $cat_id; ?>"
+                        class="gallery-link searchable-item"
+                        data-search="<?php echo htmlspecialchars($judul_custom . ' ' . $description); ?>"
+                    >
+
+                        <article class="gallery-card">
+
                             <div class="gallery-image-wrapper">
-                                <img src="<?php echo $row['image_url']; ?>" alt="<?php echo $judul_custom; ?>">
-                                <span class="gallery-badge"><?php echo $judul_custom; ?></span>
+
+                                <img
+                                    src="<?php echo htmlspecialchars($row['image_url']); ?>"
+                                    alt="<?php echo htmlspecialchars($judul_custom); ?>"
+                                    loading="lazy"
+                                >
+
+                                <span class="gallery-badge">
+                                    <?php echo htmlspecialchars($judul_custom); ?>
+                                </span>
+
                             </div>
+
+
                             <div class="gallery-content">
-                                <h3><?php echo 'Galeri ' . $judul_custom; ?></h3>
-                                <p><?php echo isset($row['description']) ? substr($row['description'], 0, 100) . '...' : 'Jelajahi koleksi ' . $judul_custom . ' terbaru kami'; ?></p>
+
+                                <h3>
+                                    Galeri <?php echo htmlspecialchars($judul_custom); ?>
+                                </h3>
+
+                                <p>
+                                    <?php echo htmlspecialchars($description); ?>
+                                </p>
+
                             </div>
-                        </div>
+
+                        </article>
+
                     </a>
+
                     <?php
                 }
             }
+
             ?>
-        </div>
-    </section>
 
-    <!-- Modern AI Assistant section with updated markup -->
-    <section id="ai-assistant" class="section fade-in">
-        <div class="ai-assistant">
-            <div class="ai-content">
-                <h3>🤖 AI Cultural Assistant</h3>
-                <p>Jelajahi budaya Jawa Timur dengan bantuan AI Cultural Assistant. Cukup tanyakan atau kirimkan gambar, dan AI cerdas ini akan memberikan informasi, cerita, dan rekomendasi seputar seni, tradisi, dan budaya lokal dengan cara yang interaktif dan menarik.</p>
-                <div class="ai-buttons">
-                    <button class="ai-btn" onclick="window.location.href='budaya-chatbot/index.php'">
-                        Tanya AI
+        </div>
+
+
+        <div class="search-empty" id="galleryEmpty">
+            Tidak ada hasil yang cocok dengan pencarian.
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     AI ASSISTANT
+========================================================= -->
+
+<section class="section ai-section" id="ai-assistant">
+
+    <div class="ai-card">
+
+        <div class="ai-content">
+
+            <div class="ai-label">
+                <i class="fa-solid fa-sparkles"></i>
+                Swara Jatim AI
+            </div>
+
+
+            <h2 class="ai-title">
+                Punya pertanyaan<br>
+                tentang <span>budaya?</span>
+            </h2>
+
+
+            <p class="ai-description">
+                Kenali Jawa Timur melalui percakapan interaktif.
+                Tanyakan tentang tradisi, kuliner, pakaian adat,
+                kesenian, sejarah, dan berbagai cerita budaya
+                Jawa Timur kepada Swara AI.
+            </p>
+
+
+            <ul class="ai-feature-list">
+
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Informasi budaya Jawa Timur
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Jawaban singkat dan mudah dipahami
+                </li>
+
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    Bisa bertanya seperti sedang mengobrol
+                </li>
+
+            </ul>
+
+
+            <a
+                href="budaya-chatbot/index.php"
+                class="ai-button"
+            >
+                Mulai Bertanya
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+
+        <div
+            class="ai-preview"
+            onclick="window.location.href='budaya-chatbot/index.php'"
+            style="cursor: pointer;"
+        >
+
+            <div class="chat-preview">
+
+                <div class="chat-preview-header">
+
+                    <div class="bot-avatar">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+
+                    <div class="chat-preview-name">
+
+                        <strong>
+                            Swara AI
+                        </strong>
+
+                        <span>
+                            Asisten Budaya Jawa Timur
+                        </span>
+
+                    </div>
+
+                    <div class="online-dot"></div>
+
+                </div>
+
+
+                <div class="chat-messages">
+
+                    <div class="preview-message bot">
+                        Halo! 👋 Ada yang ingin kamu ketahui
+                        tentang budaya Jawa Timur?
+                    </div>
+
+                    <div class="preview-message user">
+                        Apa itu Ludruk?
+                    </div>
+
+                    <div class="preview-message bot">
+                        Ludruk merupakan salah satu kesenian
+                        tradisional Jawa Timur...
+                    </div>
+
+                </div>
+
+
+                <div class="chat-preview-input">
+
+                    <span>
+                        Tanyakan sesuatu...
+                    </span>
+
+                    <button type="button">
+                        <i class="fa-solid fa-arrow-up"></i>
                     </button>
-                </div>
-            </div>
-            <div class="chat-interface" onclick="window.location.href='budaya-chatbot/index.php'">
-                <div class="chat-header">✨ Mulai Percakapan</div>
-                <div class="chat-content-area">
-                    Klik untuk memulai percakapan dengan AI Budaya
-                </div>
-                <div class="chat-input">
-                    <input type="text" placeholder="Ketik pertanyaan..." readonly>
-                    <button disabled>🚀</button>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <section class="section fade-in">
-        <h2 class="section-title">Wisata</h2>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     WISATA
+========================================================= -->
+
+<section class="content-section">
+
+    <div class="section">
+
+        <div class="section-header">
+
+            <div class="section-heading">
+
+                <span class="eyebrow">
+                    Jelajah
+                </span>
+
+                <h2 class="section-title">
+                    Wisata Jawa Timur
+                </h2>
+
+                <p class="section-subtitle">
+                    Tempat-tempat yang menyimpan cerita,
+                    lanskap, dan karakter Jawa Timur.
+                </p>
+
+            </div>
+
+
+            <a
+                href="galeri.php?id=1"
+                class="view-all"
+            >
+                Lihat semua
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+
         <div class="content-grid">
+
             <?php
-            include 'koneksi.php';
+
             $res = mysqli_query($koneksi, "
                 SELECT k.*, c.name AS city_name
                 FROM konten k
@@ -1569,25 +1821,111 @@
             ");
 
             while ($row = mysqli_fetch_assoc($res)) {
-                echo "
-                <div class='content-card'>
-                    <img src='{$row['image_url']}' alt='{$row['name']}' height='200' width='280'>
-                    <div class='card-content'>
-                        <h4>{$row['name']}</h4>
-                        <p>{$row['city_name']}</p>
-                    </div>
-                </div>
-                ";
-            }
-            ?>
-        </div>
-    </section>
 
-    <section class="section fade-in">
-        <h2 class="section-title">Pakaian dan Batik</h2>
+                ?>
+
+                <article
+                    class="content-card searchable-item"
+                    data-search="<?php echo htmlspecialchars($row['name'] . ' ' . ($row['city_name'] ?? '')); ?>"
+                >
+
+                    <div class="content-image-wrapper">
+
+                        <img
+                            class="content-image"
+                            src="<?php echo htmlspecialchars($row['image_url']); ?>"
+                            alt="<?php echo htmlspecialchars($row['name']); ?>"
+                            loading="lazy"
+                        >
+
+                        <?php if (!empty($row['city_name'])): ?>
+
+                            <span class="location-badge">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <?php echo htmlspecialchars($row['city_name']); ?>
+                            </span>
+
+                        <?php endif; ?>
+
+                    </div>
+
+
+                    <div class="card-content">
+
+                        <h4>
+                            <?php echo htmlspecialchars($row['name']); ?>
+                        </h4>
+
+                        <p>
+                            Eksplorasi wisata Jawa Timur
+                        </p>
+
+                        <span class="card-arrow">
+                            Jelajahi
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+
+                    </div>
+
+                </article>
+
+                <?php
+            }
+
+            ?>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     PAKAIAN & BATIK
+========================================================= -->
+
+<section class="content-section">
+
+    <div class="section">
+
+        <div class="section-header">
+
+            <div class="section-heading">
+
+                <span class="eyebrow">
+                    Identitas
+                </span>
+
+                <h2 class="section-title">
+                    Pakaian & Batik
+                </h2>
+
+                <p class="section-subtitle">
+                    Mengenal busana dan motif yang menjadi
+                    bagian dari identitas budaya masyarakat
+                    Jawa Timur.
+                </p>
+
+            </div>
+
+
+            <a
+                href="galeri.php?id=3"
+                class="view-all"
+            >
+                Lihat semua
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+
         <div class="content-grid">
+
             <?php
-            include 'koneksi.php';
+
             $res = mysqli_query($koneksi, "
                 SELECT k.*, c.name AS city_name
                 FROM konten k
@@ -1597,25 +1935,110 @@
             ");
 
             while ($row = mysqli_fetch_assoc($res)) {
-                echo "
-                <div class='content-card'>
-                    <img src='{$row['image_url']}' alt='{$row['name']}' height='200' width='280'>
-                    <div class='card-content'>
-                        <h4>{$row['name']}</h4>
-                        <p>{$row['city_name']}</p>
-                    </div>
-                </div>
-                ";
-            }
-            ?>
-        </div>
-    </section>
 
-    <section class="section fade-in">
-        <h2 class="section-title">Tradisi</h2>
+                ?>
+
+                <article
+                    class="content-card searchable-item"
+                    data-search="<?php echo htmlspecialchars($row['name'] . ' ' . ($row['city_name'] ?? '')); ?>"
+                >
+
+                    <div class="content-image-wrapper">
+
+                        <img
+                            class="content-image"
+                            src="<?php echo htmlspecialchars($row['image_url']); ?>"
+                            alt="<?php echo htmlspecialchars($row['name']); ?>"
+                            loading="lazy"
+                        >
+
+                        <?php if (!empty($row['city_name'])): ?>
+
+                            <span class="location-badge">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <?php echo htmlspecialchars($row['city_name']); ?>
+                            </span>
+
+                        <?php endif; ?>
+
+                    </div>
+
+
+                    <div class="card-content">
+
+                        <h4>
+                            <?php echo htmlspecialchars($row['name']); ?>
+                        </h4>
+
+                        <p>
+                            Pakaian & batik Jawa Timur
+                        </p>
+
+                        <span class="card-arrow">
+                            Jelajahi
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+
+                    </div>
+
+                </article>
+
+                <?php
+            }
+
+            ?>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     TRADISI
+========================================================= -->
+
+<section class="content-section">
+
+    <div class="section">
+
+        <div class="section-header">
+
+            <div class="section-heading">
+
+                <span class="eyebrow">
+                    Warisan
+                </span>
+
+                <h2 class="section-title">
+                    Tradisi Jawa Timur
+                </h2>
+
+                <p class="section-subtitle">
+                    Cerita, ritual, dan kebiasaan yang menjadi
+                    bagian dari perjalanan masyarakat Jawa Timur.
+                </p>
+
+            </div>
+
+
+            <a
+                href="galeri.php?id=4"
+                class="view-all"
+            >
+                Lihat semua
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+
         <div class="content-grid">
+
             <?php
-            include 'koneksi.php';
+
             $res = mysqli_query($koneksi, "
                 SELECT k.*, c.name AS city_name
                 FROM konten k
@@ -1625,83 +2048,123 @@
             ");
 
             while ($row = mysqli_fetch_assoc($res)) {
-                echo "
-                <div class='content-card'>
-                    <img src='{$row['image_url']}' alt='{$row['name']}' height='200' width='280'>
-                    <div class='card-content'>
-                        <h4>{$row['name']}</h4>
-                        <p>{$row['city_name']}</p>
+
+                ?>
+
+                <article
+                    class="content-card searchable-item"
+                    data-search="<?php echo htmlspecialchars($row['name'] . ' ' . ($row['city_name'] ?? '')); ?>"
+                >
+
+                    <div class="content-image-wrapper">
+
+                        <img
+                            class="content-image"
+                            src="<?php echo htmlspecialchars($row['image_url']); ?>"
+                            alt="<?php echo htmlspecialchars($row['name']); ?>"
+                            loading="lazy"
+                        >
+
+                        <?php if (!empty($row['city_name'])): ?>
+
+                            <span class="location-badge">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <?php echo htmlspecialchars($row['city_name']); ?>
+                            </span>
+
+                        <?php endif; ?>
+
                     </div>
-                </div>
-                ";
+
+
+                    <div class="card-content">
+
+                        <h4>
+                            <?php echo htmlspecialchars($row['name']); ?>
+                        </h4>
+
+                        <p>
+                            Tradisi Jawa Timur
+                        </p>
+
+                        <span class="card-arrow">
+                            Jelajahi
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </span>
+
+                    </div>
+
+                </article>
+
+                <?php
             }
+
             ?>
+
         </div>
-    </section>
 
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>Swara Jatim</h4>
-                <p>Portal Budaya & Berita Jawa Timur</p>
-                <p>Melestarikan dan mempromosikan kekayaan budaya Jawa Timur melalui platform digital yang informatif dan edukatif untuk generasi mendatang.</p>
-            </div>
-            <div class="footer-section">
-                <h4>Navigasi</h4>
-                <a href="index.php">Beranda</a>
-                <a href="index.php#galeri">Galeri</a>
-                <a href="mini-game.php">Mini Game</a>
-                <a href="index.php#ai-assistant">AI Assistant</a>
-            </div>
-            <div class="footer-section">
-                <h4>Kategori</h4>
-                <a href="galeri.php?id=1">Wisata</a>
-                <a href="galeri.php?id=2">Kuliner</a>
-                <a href="galeri.php?id=3">Pakaian & Batik</a>
-                <a href="galeri.php?id=4">Tradisi</a>
-            </div>
-            <div class="footer-section">
-                <h4>Kontak</h4>
-                <p>Email: info@swarajatim.com</p>
-                <p>Telepon: (031) 123-4567</p>
-                <div class="social-links">
-                    <a href="#" title="Facebook">f</a>
-                    <a href="#" title="Instagram">i</a>
-                    <a href="#" title="Twitter">t</a>
-                </div>
-            </div>
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     MINI GAME CTA
+========================================================= -->
+
+<section class="section game-section">
+
+    <div class="game-card">
+
+        <div class="game-content">
+
+            <span class="eyebrow">
+                Belajar sambil bermain
+            </span>
+
+            <h2 class="game-title">
+                Seberapa kenal kamu
+                dengan Jawa Timur?
+            </h2>
+
+            <p class="game-description">
+                Uji pengetahuanmu tentang budaya Jawa Timur
+                melalui mini game interaktif yang ringan dan
+                menyenangkan.
+            </p>
+
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Swara Jatim. Semua hak cipta dilindungi.</p>
-        </div>
-    </footer>
 
-    <script>
-        const burgerMenu = document.getElementById('burgerMenu');
-        const navMenu = document.getElementById('navMenu');
 
-        burgerMenu.addEventListener('click', () => {
-            navMenu.parentElement.classList.toggle('active');
-            burgerMenu.classList.toggle('active');
-        });
+        <a
+            href="mini-game.php"
+            class="game-button"
+        >
+            Main Sekarang
+            <i class="fa-solid fa-gamepad"></i>
+        </a>
 
-        // Close menu when a link is clicked
-        const navLinks = navMenu.querySelectorAll('a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                navMenu.parentElement.classList.remove('active');
-                burgerMenu.classList.remove('active');
-            });
-        });
+    </div>
 
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.nav-container')) {
-                navMenu.parentElement.classList.remove('active');
-                burgerMenu.classList.remove('active');
-            }
-        });
-    </script>
+</section>
+
+
+
+<?php include 'footer.php'; ?>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+
+
+
+
+
+<script src="navbar.js"></script>
+
 </body>
-
 </html>

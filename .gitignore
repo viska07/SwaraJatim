@@ -1,0 +1,23 @@
+# Gemini API key
+budaya-chatbot/config.php
+
+# Environment / secrets
+.env
+.env.*
+
+# Local development
+.vscode/
+.idea/
+
+# Dependencies
+node_modules/
+vendor/
+
+# Temporary files
+*.log
+*.tmp
+*.temp
+
+# OS files
+.DS_Store
+Thumbs.db

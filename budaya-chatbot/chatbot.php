@@ -1,6 +1,7 @@
 <?php
-$API_KEY = "AIzaSyB_VktlnGHQ_uOJf2CQsl3J98KH_aWPWjY"; 
-$model = "gemini-2.5-flash"; 
+require __DIR__ . '/config.php';
+
+$model = "gemini-3.6-flash";
 $url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$API_KEY";
 $userMessage = trim($_POST['message'] ?? '');
 

@@ -1,132 +1,330 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Mini Game - Swara Jatim</title>
 
-<style>
-body {
-    background-color: #FFEAC5;
-    font-family: 'Georgia', serif;
-    margin: 0;
-    padding: 20px;
-    min-height: 100vh;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-.back-button {
-    background: #8b4513;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'Georgia', serif;
-    font-size: 1rem;
-    transition: .3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 3px 10px rgba(0,0,0,.2);
-    margin-bottom: 2rem;
-}
+    <title>Mini Game - Swara Jatim</title>
 
-.back-button:hover {
-    background: #5e3a1f;
-    transform: translateX(-5px);
-}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-.back-button::before {
-    font-size: 1.3rem;
-}
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet"
+    >
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
 
-.title {
-    text-align: center;
-    margin-bottom: 3rem;
-    font-size: 2.5rem;
-    color: #5e3a1f;
-}
+    <!-- NAVBAR + FOOTER SHARED -->
+    <link rel="stylesheet" href="navbar-footer.css">
 
-.game-list {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-}
+    <style>
 
-.card {
-    background: white;
-    border-radius: 15px;
-    padding: 3rem 2.5rem;
-    width: 320px;
-    cursor: pointer;
-    transition: .3s ease;
-    box-shadow: 0 5px 20px rgba(0,0,0,.15);
-}
+        /* HANYA CSS MINI GAME DI SINI */
 
-.card:hover {
-    transform: translateY(-8px);
-    background: #fff2db;
-    box-shadow: 0 8px 30px rgba(0,0,0,.25);
-}
+        :root {
+            --bg:#f8f5ef;
+            --surface:#ffffff;
+            --surface-soft:#f2ede5;
+            --dark:#241b16;
+            --dark-soft:#3a2b23;
+            --brown:#6b4935;
+            --terracotta:#b85c38;
+            --gold:#c99a5b;
+            --text:#332a25;
+            --muted:#756b63;
+            --border:#e5ddd3;
+            --radius-sm:10px;
+            --radius-md:18px;
+            --radius-lg:28px;
+            --shadow-sm:0 8px 25px rgba(36,27,22,.06);
+            --shadow-md:0 16px 40px rgba(36,27,22,.10);
+            --max-width:1240px;
+        }
 
-.card h3 {
-    color: #8b4513;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-}
+        * {
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
+        }
 
-.card p {
-    font-size: 1rem;
-    color: #666;
-    margin: 0;
-    line-height: 1.6;
-}
+        html {
+            scroll-behavior:smooth;
+        }
 
-@media (max-width: 768px) {
-    .game-list {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .card {
-        width: 100%;
-        max-width: 400px;
-    }
-    
-    .title {
-        font-size: 2rem;
-    }
-}
-</style>
+        body {
+            background:var(--bg);
+            color:var(--text);
+            font-family:'DM Sans',sans-serif;
+            min-height:100vh;
+        }
+
+        a {
+            text-decoration:none;
+            color:inherit;
+        }
+
+        main {
+            width:min(100% - 48px,var(--max-width));
+            margin:0 auto;
+            padding:128px 0 90px;
+        }
+
+        /* CSS GAME SAJA */
+        
+        .page-heading {
+            text-align:center;
+            margin-bottom:46px;
+        }
+
+        .eyebrow {
+            display:inline-block;
+            margin-bottom:12px;
+            color:var(--terracotta);
+            font-size:.82rem;
+            font-weight:700;
+            letter-spacing:.12em;
+            text-transform:uppercase;
+        }
+
+        .page-heading h1 {
+            font-family:'Playfair Display',serif;
+            color:var(--dark);
+            font-size:clamp(2rem,4vw,3rem);
+            line-height:1.15;
+            margin-bottom:12px;
+        }
+
+        .page-heading p {
+            max-width:620px;
+            margin:auto;
+            color:var(--muted);
+            line-height:1.7;
+        }
+
+        .game-list {
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:24px;
+            max-width:1080px;
+            margin:0 auto;
+        }
+
+        .game-card {
+            display:flex;
+            flex-direction:column;
+            min-height:250px;
+            padding:32px;
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:var(--radius-md);
+            box-shadow:var(--shadow-sm);
+            cursor:pointer;
+            transition:
+                transform .25s ease,
+                box-shadow .25s ease,
+                border-color .25s ease;
+        }
+
+        .game-card:hover {
+            transform:translateY(-7px);
+            box-shadow:var(--shadow-md);
+            border-color:rgba(184,92,56,.35);
+        }
+
+        .game-icon {
+            width:54px;
+            height:54px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            margin-bottom:24px;
+            border-radius:15px;
+            background:var(--surface-soft);
+            color:var(--terracotta);
+            font-size:1.45rem;
+        }
+
+        .game-card h2 {
+            font-family:'Playfair Display',serif;
+            color:var(--dark);
+            font-size:1.4rem;
+            margin-bottom:10px;
+        }
+
+        .game-card p {
+            color:var(--muted);
+            line-height:1.7;
+            font-size:.95rem;
+        }
+
+        .card-link {
+            margin-top:auto;
+            padding-top:24px;
+            color:var(--terracotta);
+            font-size:.9rem;
+            font-weight:700;
+        }
+
+        @media (max-width:768px) {
+
+            .game-list {
+                grid-template-columns:1fr;
+            }
+
+        }
+
+        @media (max-width:600px) {
+
+            main {
+                width:min(100% - 32px,var(--max-width));
+                padding-top:112px;
+                padding-bottom:65px;
+            }
+
+            .page-heading {
+                margin-bottom:34px;
+            }
+
+            .page-heading h1 {
+                font-size:2rem;
+            }
+
+            .game-card {
+                min-height:220px;
+                padding:26px;
+            }
+
+        }
+
+        @media (max-width:400px) {
+
+            .page-heading h1 {
+                font-size:1.8rem;
+            }
+
+            .game-card {
+                padding:22px;
+            }
+
+        }
+
+    </style>
+
 </head>
+
 <body>
 
-<button class="back-button" onclick="location.href='index.php'">Kembali</button>
+<?php include 'navbar.php'; ?>
 
-<div class="container">
-    <h1 class="title">🎮 Pilih Mini Game</h1>
 
-    <div class="game-list">
-        <div class="card" onclick="window.location.href='quiz.php?mode=truefalse'">
-            <h3>True / False</h3>
-            <p>Jawab cepat dan sederhana: Benar atau Salah.</p>
+<main>
+
+    <section class="page-heading">
+
+        <span class="eyebrow">
+            Swara Jatim
+        </span>
+
+        <h1>
+            🎮 Pilih Mini Game
+        </h1>
+
+        <p>
+            Uji pengetahuanmu tentang budaya, tradisi, kuliner,
+            pakaian adat, dan berbagai kekayaan Jawa Timur.
+        </p>
+
+    </section>
+
+
+    <section class="game-list">
+
+        <div
+            class="game-card"
+            onclick="window.location.href='quiz.php?mode=truefalse'"
+        >
+            <div class="game-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <h2>
+                True / False
+            </h2>
+
+            <p>
+                Jawab cepat dan sederhana: tentukan apakah
+                pernyataan tentang budaya Jawa Timur benar atau salah.
+            </p>
+
+            <div class="card-link">
+                Mulai Game
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
         </div>
 
-        <div class="card" onclick="window.location.href='quiz.php?mode=multiplechoice'">
-            <h3>Pilihan Ganda</h3>
-            <p>Satu jawaban benar dari beberapa pilihan.</p>
+
+        <div
+            class="game-card"
+            onclick="window.location.href='quiz.php?mode=multiplechoice'"
+        >
+            <div class="game-icon">
+                <i class="fa-solid fa-list-check"></i>
+            </div>
+
+            <h2>
+                Pilihan Ganda
+            </h2>
+
+            <p>
+                Pilih satu jawaban yang benar dari beberapa
+                pilihan mengenai budaya Jawa Timur.
+            </p>
+
+            <div class="card-link">
+                Mulai Game
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
         </div>
 
-        <div class="card" onclick="window.location.href='quiz.php?mode=multipleresponse'">
-            <h3>Multiple Response</h3>
-            <p>Bisa pilih lebih dari satu jawaban yang benar.</p>
+
+        <div
+            class="game-card"
+            onclick="window.location.href='quiz.php?mode=multipleresponse'"
+        >
+            <div class="game-icon">
+                <i class="fa-solid fa-square-check"></i>
+            </div>
+
+            <h2>
+                Multiple Response
+            </h2>
+
+            <p>
+                Pilih lebih dari satu jawaban yang benar
+                untuk menguji pengetahuanmu lebih jauh.
+            </p>
+
+            <div class="card-link">
+                Mulai Game
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
         </div>
-    </div>
-</div>
+
+    </section>
+
+</main>
+
+
+<?php include 'footer.php'; ?>
+
+
+<script src="navbar.js"></script>
 
 </body>
 </html>

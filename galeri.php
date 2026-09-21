@@ -1,5 +1,6 @@
 <?php
 include "koneksi.php";
+
 if (isset($_GET['id'])) {
     $cat_id = intval($_GET['id']);
 } else {
@@ -23,6 +24,28 @@ $judul_custom = $kategori[$cat_id];
 
 $sql = "SELECT * FROM konten WHERE category_id = $cat_id ORDER BY id DESC";
 $result = mysqli_query($koneksi, $sql);
+
+/*
+|--------------------------------------------------------------------------
+| Banner kategori
+|--------------------------------------------------------------------------
+| Gambar pertama dari kategori digunakan sebagai banner.
+| Jadi ketika membuka:
+| galeri.php?id=1  -> banner Wisata
+| galeri.php?id=2  -> banner Kuliner
+| galeri.php?id=3  -> banner Pakaian
+| galeri.php?id=4  -> banner Tradisi
+*/
+$hero_image = '';
+$total_konten = $result ? mysqli_num_rows($result) : 0;
+
+if ($total_konten > 0) {
+    $first_row = mysqli_fetch_assoc($result);
+    $hero_image = $first_row['image_url'] ?? '';
+
+    // Kembalikan pointer agar data tetap bisa digunakan saat looping.
+    mysqli_data_seek($result, 0);
+}
 ?>
 
 <!DOCTYPE html>
@@ -31,11 +54,29 @@ $result = mysqli_query($koneksi, $sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeri <?php echo $judul_custom; ?> - Swara Jatim</title>
+
+    <title>
+        Galeri <?php echo htmlspecialchars($judul_custom); ?> - Swara Jatim
+    </title>
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Navbar & Footer Global -->
+    <link rel="stylesheet" href="navbar-footer.css">
+
     <style>
+
+        /* =========================================================
+           GLOBAL
+           ========================================================= */
+
         * {
             margin: 0;
             padding: 0;
@@ -43,16 +84,33 @@ $result = mysqli_query($koneksi, $sql);
         }
 
         :root {
-            --primary: #C85A17;
-            --primary-dark: #8b4513;
-            --primary-light: #E8A863;
-            --secondary: #2c1810;
-            --neutral-100: #f8f6f3;
-            --neutral-200: #ede9e3;
-            --neutral-500: #888888;
-            --neutral-900: #1a1a1a;
-            --accent: #E8A863;
-            --success: #4caf50;
+            --bg: #f8f5ef;
+            --surface: #ffffff;
+            --surface-soft: #f2ede5;
+
+            --dark: #241b16;
+            --dark-soft: #3a2b23;
+
+            --brown: #6b4935;
+            --terracotta: #b85c38;
+            --gold: #c99a5b;
+
+            --text: #332a25;
+            --muted: #756b63;
+
+            --border: #e5ddd3;
+
+            --radius-sm: 10px;
+            --radius-md: 18px;
+            --radius-lg: 28px;
+
+            --shadow-sm:
+                0 8px 25px rgba(36, 27, 22, 0.06);
+
+            --shadow-md:
+                0 16px 40px rgba(36, 27, 22, 0.10);
+
+            --max-width: 1240px;
         }
 
         html {
@@ -60,705 +118,1345 @@ $result = mysqli_query($koneksi, $sql);
         }
 
         body {
-            font-family: 'Georgia', serif;
-            background-color: #f5f1e8;
-            color: #333;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.6;
-            background-color: #FFEAC5;
         }
 
-        /* ===== HEADER ===== */
-        .header {
-            background-color: var(--secondary);
-            padding: 1.2rem 0;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            backdrop-filter: blur(10px);
-            background-color: rgba(44, 24, 16, 0.98);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-            gap: 2rem;
-        }
-
-        .logo {
-            font-size: 1.6rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: #FFE1AF;
-            background-clip: text;
-            text-decoration: none;
-            white-space: nowrap;
-            letter-spacing: -0.5px;
-        }
-
-        .logo a {
+        a {
             color: inherit;
-            text-decoration: none;
         }
 
-        .search-container {
-            flex: 1;
-            max-width: 400px;
-        }
 
-        .search-box {
-            width: 100%;
-            padding: 0.8rem 1.5rem;
-            border: 1.5px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50px;
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-            font-size: 0.95rem;
-            font-family: inherit;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
-        }
+        /* =========================================================
+           HERO / BANNER
+           ========================================================= */
 
-        .search-box::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
+        .gallery-hero {
+            position: relative;
 
-        .search-box:focus {
-            outline: none;
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(232, 168, 99, 0.3);
-        }
+            min-height: 360px;
 
-        .nav-menu {
+            margin-top: 78px;
+
             display: flex;
-            list-style: none;
-            gap: 2.5rem;
-            margin: 0;
-        }
+            align-items: flex-end;
 
-        .nav-menu a {
-            color: rgba(255, 255, 255, 0.85);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.3s ease;
-            position: relative;
-        }
-
-        .nav-menu a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
-            transition: width 0.3s ease;
-        }
-
-        .nav-menu a:hover {
-            color: white;
-        }
-
-        .nav-menu a:hover::after {
-            width: 100%;
-        }
-
-        /* ===== HERO SECTION ===== */
-        .hero-section {
-            margin-top: 70px;
-            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary-dark) 100%);
-            padding: 4rem 2rem;
-            text-align: center;
-            color: white;
-            position: relative;
             overflow: hidden;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(36, 27, 22, .94) 0%,
+                    rgba(36, 27, 22, .72) 42%,
+                    rgba(36, 27, 22, .22) 100%
+                ),
+
+                <?php
+                if ($hero_image) {
+                    echo "url('" .
+                        htmlspecialchars($hero_image, ENT_QUOTES) .
+                        "')";
+                } else {
+                    echo "linear-gradient(135deg, #3a2b23, #8f4e2d)";
+                }
+                ?>;
+
+            background-size: cover;
+            background-position: center;
         }
 
-        .hero-section::before {
+        .gallery-hero::after {
             content: '';
+
             position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(232, 168, 99, 0.15) 0%, transparent 70%);
-            border-radius: 50%;
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    0deg,
+                    rgba(36, 27, 22, .38),
+                    transparent 55%
+                );
+
+            pointer-events: none;
         }
 
-        .hero-content {
+        .hero-inner {
             position: relative;
-            z-index: 1;
-        }
+            z-index: 2;
 
-        .hero-section h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            margin-bottom: 1rem;
-            font-weight: 700;
-            letter-spacing: -1px;
-        }
+            width: min(
+                100% - 48px,
+                var(--max-width)
+            );
 
-        .hero-section p {
-            font-size: 1.1rem;
-            opacity: 0.95;
-            font-weight: 300;
-            letter-spacing: 0.5px;
-        }
-
-        /* ===== CONTAINER ===== */
-        .container {
-            max-width: 1400px;
             margin: 0 auto;
-            padding: 4rem 2rem;
+
+            padding: 46px 0 52px;
+
+            color: #ffffff;
         }
 
-        /* ===== GALLERY GRID ===== */
+
+        /* =========================================================
+           BREADCRUMB
+           ========================================================= */
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            margin-bottom: 18px;
+
+            font-size: .84rem;
+
+            color: rgba(255, 255, 255, .82);
+        }
+
+        .breadcrumb a {
+            text-decoration: none;
+            transition: color .2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #ffffff;
+        }
+
+        .breadcrumb .separator {
+            opacity: .5;
+        }
+
+
+        /* =========================================================
+           HERO TEXT
+           ========================================================= */
+
+        .hero-kicker {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 8px;
+
+            margin-bottom: 10px;
+
+            color: #f0c98e;
+
+            font-size: .78rem;
+            font-weight: 700;
+
+            letter-spacing: .12em;
+
+            text-transform: uppercase;
+        }
+
+        .hero-kicker::before {
+            content: '';
+
+            width: 28px;
+            height: 1px;
+
+            background: #f0c98e;
+        }
+
+        .gallery-hero h1 {
+            max-width: 720px;
+
+            margin-bottom: 10px;
+
+            font-family: 'Playfair Display', serif;
+
+            font-size:
+                clamp(
+                    2.5rem,
+                    5vw,
+                    4.4rem
+                );
+
+            line-height: 1.04;
+
+            letter-spacing: -.035em;
+        }
+
+        .gallery-hero p {
+            max-width: 600px;
+
+            color:
+                rgba(255, 255, 255, .88);
+
+            font-size: 1rem;
+        }
+
+
+        /* =========================================================
+           MAIN CONTENT
+           ========================================================= */
+
+        .gallery-main {
+            width: min(
+                100% - 48px,
+                var(--max-width)
+            );
+
+            margin: 0 auto;
+
+            padding:
+                38px 0 70px;
+        }
+
+
+        /* =========================================================
+           CATEGORY TABS
+           ========================================================= */
+
+        .category-tabs {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 12px;
+
+            margin-bottom: 38px;
+        }
+
+        .category-tab {
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            min-height: 52px;
+
+            padding:
+                10px 18px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 999px;
+
+            background:
+                rgba(255, 255, 255, .68);
+
+            color: var(--brown);
+
+            font-size: .92rem;
+            font-weight: 600;
+
+            text-decoration: none;
+
+            transition:
+                transform .25s ease,
+                background .25s ease,
+                border-color .25s ease,
+                box-shadow .25s ease;
+        }
+
+        .category-tab:hover {
+            transform: translateY(-2px);
+
+            border-color: var(--gold);
+
+            background: #ffffff;
+
+            box-shadow: var(--shadow-sm);
+        }
+
+        .category-tab.active {
+            border-color: var(--brown);
+
+            background: var(--brown);
+
+            color: #ffffff;
+
+            box-shadow:
+                0 10px 24px
+                rgba(107, 73, 53, .18);
+        }
+
+
+        /* =========================================================
+           GALLERY HEADER
+           ========================================================= */
+
+        .gallery-heading {
+            display: flex;
+
+            align-items: flex-end;
+            justify-content: space-between;
+
+            gap: 20px;
+
+            margin-bottom: 22px;
+        }
+
+        .gallery-heading .eyebrow {
+            margin-bottom: 4px;
+
+            color: var(--terracotta);
+
+            font-size: .76rem;
+            font-weight: 700;
+
+            letter-spacing: .12em;
+
+            text-transform: uppercase;
+        }
+
+        .gallery-heading h2 {
+            font-family: 'Playfair Display', serif;
+
+            color: var(--dark);
+
+            font-size:
+                clamp(
+                    1.65rem,
+                    3vw,
+                    2.25rem
+                );
+
+            line-height: 1.2;
+        }
+
+        .gallery-count {
+            flex-shrink: 0;
+
+            color: var(--muted);
+
+            font-size: .9rem;
+        }
+
+
+        /* =========================================================
+           GALLERY GRID
+           
+           DESKTOP = 4 CARD PER BARIS
+           ========================================================= */
+
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 2.5rem;
-            margin-bottom: 3rem;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 24px;
         }
 
+
+        /* =========================================================
+           CARD
+           ========================================================= */
+
         .gallery-card {
-            background: white;
-            border-radius: 16px;
+            min-width: 0;
+
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
+
             display: flex;
             flex-direction: column;
-            height: 100%;
-            border: 1px solid rgba(0, 0, 0, 0.04);
+
+            border:
+                1px solid
+                rgba(229, 221, 211, .9);
+
+            border-radius: var(--radius-md);
+
+            background: var(--surface);
+
+            box-shadow: var(--shadow-sm);
+
+            cursor: pointer;
+
+            animation:
+                fadeInUp .5s ease both;
+
+            transition:
+                transform .28s ease,
+                box-shadow .28s ease,
+                border-color .28s ease;
         }
 
         .gallery-card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            transform: translateY(-6px);
+
+            border-color: #d9c7b5;
+
+            box-shadow: var(--shadow-md);
         }
 
+
+        /* =========================================================
+           CARD IMAGE
+           ========================================================= */
+
         .card-image-wrapper {
-            width: 100%;
-            height: 280px;
-            overflow: hidden;
             position: relative;
-            background: linear-gradient(135deg, var(--neutral-200), var(--neutral-100));
+
+            height: 205px;
+
+            overflow: hidden;
+
+            background:
+                var(--surface-soft);
+        }
+
+        .card-image-wrapper::after {
+            content: '';
+
+            position: absolute;
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(36, 27, 22, .05),
+                    rgba(36, 27, 22, .16)
+                );
+
+            pointer-events: none;
         }
 
         .card-image-wrapper img {
             width: 100%;
             height: 100%;
+
+            display: block;
+
             object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+            transition:
+                transform .5s ease;
         }
 
-        .gallery-card:hover .card-image-wrapper img {
-            transform: scale(1.08);
+        .gallery-card:hover
+        .card-image-wrapper img {
+            transform: scale(1.05);
         }
+
+
+        /* =========================================================
+           CARD BADGE
+           ========================================================= */
 
         .card-badge {
             position: absolute;
-            top: 16px;
-            right: 16px;
-            background: var(--primary);
-            color: white;
-            padding: 7px 18px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
+
+            z-index: 2;
+
+            top: 14px;
+            right: 14px;
+
+            padding:
+                6px 12px;
+
+            border-radius: 999px;
+
+            background:
+                var(--terracotta);
+
+            color: #ffffff;
+
+            font-size: .68rem;
+            font-weight: 700;
+
+            letter-spacing: .05em;
+
             text-transform: uppercase;
-            letter-spacing: 0.7px;
-            box-shadow: 0 4px 15px rgba(200, 90, 23, 0.3);
-            backdrop-filter: blur(10px);
+
+            box-shadow:
+                0 6px 16px
+                rgba(184, 92, 56, .25);
         }
 
+
+        /* =========================================================
+           CARD CONTENT
+           ========================================================= */
+
         .card-content {
-            padding: 2rem;
             flex: 1;
+
             display: flex;
             flex-direction: column;
+
+            padding:
+                19px 19px 18px;
         }
 
         .card-content h3 {
-            color: var(--primary-dark);
-            margin-bottom: 0.8rem;
-            font-size: 1.5rem;
+            margin-bottom: 7px;
+
+            color: var(--brown);
+
+            font-family:
+                'Playfair Display',
+                serif;
+
+            font-size: 1.18rem;
+
             line-height: 1.3;
-            font-weight: 600;
-            font-family: 'Playfair Display', serif;
         }
 
         .card-content p {
-            color: var(--neutral-500);
-            font-size: 0.95rem;
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
-            flex: 1;
             display: -webkit-box;
+
+            overflow: hidden;
+
+            margin-bottom: 16px;
+
+            color: var(--muted);
+
+            font-size: .84rem;
+
+            line-height: 1.65;
+
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
-            overflow: hidden;
         }
+
+
+        /* =========================================================
+           DETAIL BUTTON
+           ========================================================= */
 
         .card-button {
             display: inline-flex;
+
             align-items: center;
-            gap: 0.7rem;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 0.9rem 1.8rem;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            text-align: center;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-size: 0.95rem;
+
+            gap: 8px;
+
             width: fit-content;
-            box-shadow: 0 4px 15px rgba(200, 90, 23, 0.2);
+
+            margin-top: auto;
+
+            color:
+                var(--terracotta);
+
+            font-size: .82rem;
+
+            font-weight: 700;
+
+            text-decoration: none;
+
+            transition:
+                gap .2s ease,
+                color .2s ease;
+        }
+
+        .card-button::after {
+            content: '→';
+
+            font-size: 1.05rem;
+
+            line-height: 1;
         }
 
         .card-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(200, 90, 23, 0.35);
+            gap: 11px;
+
+            color: var(--brown);
         }
 
-        /* ===== EMPTY STATE ===== */
-        .empty-state {
+
+        /* =========================================================
+           EMPTY / SEARCH STATE
+           ========================================================= */
+
+        .empty-state,
+        .no-results {
             grid-column: 1 / -1;
+
+            padding: 60px 24px;
+
+            border:
+                1px dashed
+                #d8cbbb;
+
+            border-radius:
+                var(--radius-md);
+
+            background:
+                rgba(255, 255, 255, .65);
+
             text-align: center;
-            padding: 5rem 2rem;
         }
 
-        .empty-state h3 {
-            color: var(--primary-dark);
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            font-family: 'Playfair Display', serif;
+        .empty-state h3,
+        .no-results h3 {
+            margin-bottom: 8px;
+
+            color: var(--dark);
+
+            font-family:
+                'Playfair Display',
+                serif;
+
+            font-size: 1.5rem;
         }
 
-        .empty-state p {
-            color: var(--neutral-500);
-            font-size: 1.05rem;
-            margin-bottom: 2rem;
+        .empty-state p,
+        .no-results p {
+            margin-bottom: 18px;
+
+            color: var(--muted);
+
+            font-size: .9rem;
         }
 
         .back-to-home {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
+            display: inline-flex;
+
+            padding:
+                10px 16px;
+
+            border-radius: 999px;
+
+            background:
+                var(--brown);
+
+            color: #ffffff;
+
+            font-size: .85rem;
             font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(200, 90, 23, 0.2);
-        }
 
-        .back-to-home:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(200, 90, 23, 0.35);
-        }
-
-        .no-results {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 4rem 2rem;
-        }
-
-        .no-results h3 {
-            color: var(--primary-dark);
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            font-family: 'Playfair Display', serif;
-        }
-
-        .no-results p {
-            color: var(--neutral-500);
-            font-size: 1rem;
-        }
-
-        /* ===== FOOTER ===== */
-        .footer {
-            background: var(--secondary);
-            color: rgba(255, 255, 255, 0.85);
-            padding: 4rem 2rem 2rem;
-            margin-top: 5rem;
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 3rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-section h4 {
-            color: var(--accent);
-            margin-bottom: 1.3rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .footer-section p,
-        .footer-section a {
-            color: rgba(255, 255, 255, 0.75);
             text-decoration: none;
-            margin-bottom: 0.8rem;
-            display: block;
-            transition: color 0.3s ease;
-            font-size: 0.95rem;
-            line-height: 1.7;
         }
 
-        .footer-section a:hover {
-            color: var(--accent);
+
+        /* =========================================================
+           ANIMATION
+           ========================================================= */
+
+        @keyframes fadeInUp {
+
+            from {
+                opacity: 0;
+
+                transform:
+                    translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
         }
 
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
 
-        .social-links a {
-            background: var(--primary);
-            color: white;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 1.1rem;
-            margin: 0;
-        }
+        /* =========================================================
+           TABLET
+           ========================================================= */
 
-        .social-links a:hover {
-            background: var(--accent);
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(232, 168, 99, 0.3);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1rem 1.5rem;
-            }
-
-            .nav-menu {
-                gap: 1.5rem;
-                font-size: 0.9rem;
-            }
-
-            .search-container {
-                max-width: 100%;
-            }
-
-            .hero-section {
-                padding: 3rem 1.5rem;
-                margin-top: 60px;
-            }
-
-            .hero-section h1 {
-                font-size: 2rem;
-            }
-
-            .container {
-                padding: 2.5rem 1.5rem;
-            }
+        @media (max-width: 1100px) {
 
             .gallery-grid {
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                gap: 1.5rem;
+                grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
+            }
+        }
+
+
+        /* =========================================================
+           TABLET / NAVBAR BREAKPOINT
+           ========================================================= */
+
+        @media (max-width: 850px) {
+
+            .gallery-hero {
+                margin-top: 70px;
+
+                min-height: 330px;
+            }
+
+            .hero-inner,
+            .gallery-main {
+                width:
+                    min(
+                        100% - 36px,
+                        var(--max-width)
+                    );
+            }
+
+            .category-tabs {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+        }
+
+
+        /* =========================================================
+           SMALL TABLET
+           ========================================================= */
+
+        @media (max-width: 700px) {
+
+            .gallery-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+
+                gap: 16px;
             }
 
             .card-image-wrapper {
-                height: 240px;
+                height: 180px;
             }
 
             .card-content {
-                padding: 1.5rem;
+                padding: 16px;
+            }
+
+            .gallery-heading {
+                align-items: flex-start;
+
+                flex-direction: column;
+
+                gap: 5px;
             }
         }
 
-        @media (max-width: 480px) {
-            .nav-container {
-                padding: 0.8rem 1rem;
+
+        /* =========================================================
+           MOBILE
+           ========================================================= */
+
+        @media (max-width: 520px) {
+
+            .gallery-hero {
+                min-height: 300px;
             }
 
-            .logo {
-                font-size: 1.3rem;
+            .hero-inner {
+                padding:
+                    35px 0 38px;
             }
 
-            .nav-menu {
-                display: none;
+            .gallery-hero h1 {
+                font-size: 2.35rem;
             }
 
-            .search-box {
-                padding: 0.7rem 1rem;
-                font-size: 0.9rem;
+            .gallery-hero p {
+                font-size: .9rem;
             }
 
-            .hero-section {
-                padding: 2rem 1rem;
-                margin-top: 50px;
+            .gallery-main {
+                padding-top: 26px;
+                padding-bottom: 50px;
             }
 
-            .hero-section h1 {
-                font-size: 1.5rem;
-                margin-bottom: 0.5rem;
+            .category-tabs {
+                grid-template-columns: 1fr;
+
+                gap: 8px;
+
+                margin-bottom: 30px;
             }
 
-            .hero-section p {
-                font-size: 0.95rem;
-            }
-
-            .container {
-                padding: 1.5rem 1rem;
+            .category-tab {
+                min-height: 46px;
             }
 
             .gallery-grid {
                 grid-template-columns: 1fr;
-                gap: 1.2rem;
             }
 
-            .card-content h3 {
-                font-size: 1.2rem;
-            }
-
-            .footer-content {
-                gap: 2rem;
+            .card-image-wrapper {
+                height: 220px;
             }
         }
 
-        /* ===== ANIMATIONS ===== */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .gallery-card {
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        .gallery-card:nth-child(n) {
-            animation-delay: calc(0.1s * var(--index, 0));
-        }
     </style>
 </head>
 
+
 <body>
 
-    <header class="header">
-        <div class="nav-container">
-            <div class="logo"><a href="index.php">Swara Jatim</a></div>
+    <!-- =====================================================
+         NAVBAR GLOBAL
+         Jangan dibuat ulang di halaman ini.
+         ===================================================== -->
 
-            <div class="search-container">
-                <input type="text" id="searchInput" class="search-box" placeholder="Cari artikel...">
+    <?php include 'navbar.php'; ?>
+
+
+    <main>
+
+        <!-- =====================================================
+             HERO / BANNER KATEGORI
+             ===================================================== -->
+
+        <section class="gallery-hero">
+
+            <div class="hero-inner">
+
+                <div class="breadcrumb">
+
+                    <a href="index.php">
+                        Beranda
+                    </a>
+
+                    <span class="separator">
+                        ›
+                    </span>
+
+                    <span>
+                        Galeri
+                    </span>
+
+                    <span class="separator">
+                        ›
+                    </span>
+
+                    <span>
+                        <?php echo htmlspecialchars($judul_custom); ?>
+                    </span>
+
+                </div>
+
+
+                <div class="hero-kicker">
+                    Swara Jatim
+                </div>
+
+
+                <h1>
+                    Galeri
+                    <?php echo htmlspecialchars($judul_custom); ?>
+                </h1>
+
+
+                <p>
+                    Jelajahi koleksi
+                    <?php echo strtolower(htmlspecialchars($judul_custom)); ?>
+                    khas Jawa Timur, dari cerita lokal hingga warisan
+                    yang masih hidup sampai sekarang.
+                </p>
+
             </div>
 
-            <nav>
-                <ul class="nav-menu">
-                    <li><a href="index.php">Home</a></li>
-                    <li><a href="index.php#galeri">Galeri</a></li>
-                    <li><a href="index.php#ai-assistant">Swara Jatim AI</a></li>
-                    <li><a href="mini-game.php">Mini Game</a></li>
-                </ul>
+        </section>
+
+
+        <!-- =====================================================
+             CONTENT GALERI
+             ===================================================== -->
+
+        <section class="gallery-main">
+
+
+            <!-- =================================================
+                 CATEGORY NAVIGATION
+                 ================================================= -->
+
+            <nav
+                class="category-tabs"
+                aria-label="Kategori galeri"
+            >
+
+                <?php foreach ($kategori as $id => $nama): ?>
+
+                    <a
+                        href="galeri.php?id=<?php echo $id; ?>"
+                        class="category-tab
+                        <?php echo $id === $cat_id ? 'active' : ''; ?>"
+                    >
+
+                        <?php echo htmlspecialchars($nama); ?>
+
+                        <?php
+                        if ($nama === 'Pakaian') {
+                            echo ' & Batik';
+                        }
+                        ?>
+
+                    </a>
+
+                <?php endforeach; ?>
+
             </nav>
-        </div>
-    </header>
 
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1>Galeri <?php echo $judul_custom; ?></h1>
-            <p>Jelajahi koleksi <?php echo strtolower($judul_custom); ?> khas Jawa Timur</p>
-        </div>
-    </section>
 
-    <div class="container">
-        <div class="gallery-grid" id="galleryGrid">
-            <?php
-            if (mysqli_num_rows($result) > 0) {
-                $index = 0;
-                while ($row = mysqli_fetch_assoc($result)) {
-                    $description = $row['description'];
-                    $sentences = preg_split('/(?<=[.!?])\s+/', $description, 3);
-                    $preview = isset($sentences[0]) ? $sentences[0] : '';
-                    if (isset($sentences[1])) {
-                        $preview .= ' ' . $sentences[1];
-                    }
-                    ?>
-                    <div class="gallery-card" 
-                         style="--index: <?php echo $index; ?>"
-                         data-title="<?php echo strtolower($row['name']); ?>"
-                         data-content="<?php echo strtolower(strip_tags($row['description'])); ?>">
-                        <div class="card-image-wrapper">
-                            <img src="<?php echo $row['image_url']; ?>" alt="<?php echo htmlspecialchars($row['name']); ?>" loading="lazy">
-                            <div class="card-badge"><?php echo $judul_custom; ?></div>
-                        </div>
-                        <div class="card-content">
-                            <h3><?php echo htmlspecialchars($row['name']); ?></h3>
-                            <p><?php echo htmlspecialchars($preview); ?></p>
-                            <a href="detail.php?id=<?php echo $row['id']; ?>" class="card-button">Baca Selengkapnya</a>
-                        </div>
+            <!-- =================================================
+                 HEADER GALERI
+                 ================================================= -->
+
+            <div class="gallery-heading">
+
+                <div>
+
+                    <div class="eyebrow">
+                        Koleksi
+                        <?php echo htmlspecialchars($judul_custom); ?>
                     </div>
-                    <?php
-                    $index++;
-                }
-            } else {
-                ?>
-                <div class="empty-state">
-                    <h3>📭 Belum Ada Konten</h3>
-                    <p>Maaf, belum ada artikel di kategori <?php echo $judul_custom; ?> saat ini.</p>
-                    <a href="index.php" class="back-to-home">Kembali ke Beranda</a>
-                </div>
-                <?php
-            }
-            ?>
-        </div>
-    </div>
 
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>Swara Jatim</h4>
-                <p>Portal Budaya & Berita Jawa Timur</p>
-                <p>Melestarikan dan mempromosikan kekayaan budaya Jawa Timur melalui platform digital yang informatif dan edukatif untuk generasi mendatang.</p>
-            </div>
-            <div class="footer-section">
-                <h4>Navigasi</h4>
-                <a href="index.php">Beranda</a>
-                <a href="index.php#galeri">Galeri</a>
-                <a href="mini-game.php">Mini Game</a>
-                <a href="index.php#ai-assistant">AI Assistant</a>
-            </div>
-            <div class="footer-section">
-                <h4>Kategori</h4>
-                <a href="galeri.php?id=1">Wisata</a>
-                <a href="galeri.php?id=2">Kuliner</a>
-                <a href="galeri.php?id=3">Pakaian & Batik</a>
-                <a href="galeri.php?id=4">Tradisi</a>
-            </div>
-            <div class="footer-section">
-                <h4>Kontak</h4>
-                <p>Email: info@swarajatim.com</p>
-                <p>Telepon: (031) 123-4567</p>
-                <div class="social-links">
-                    <a href="#" title="Facebook">f</a>
-                    <a href="#" title="Instagram">i</a>
-                    <a href="#" title="Twitter">t</a>
+                    <h2>
+                        Temukan cerita di balik setiap karya
+                    </h2>
+
                 </div>
+
+
+                <div class="gallery-count">
+
+                    Menampilkan
+                    <?php echo $total_konten; ?>
+
+                    <?php echo strtolower(
+                        htmlspecialchars($judul_custom)
+                    ); ?>
+
+                </div>
+
             </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Swara Jatim. Semua hak cipta dilindungi.</p>
-        </div>
-    </footer>
+
+
+            <!-- =================================================
+                 4 COLUMN CARD GRID
+                 ================================================= -->
+
+            <div
+                class="gallery-grid"
+                id="galleryGrid"
+            >
+
+                <?php if ($total_konten > 0): ?>
+
+                    <?php
+
+                    $index = 0;
+
+                    while (
+                        $row = mysqli_fetch_assoc($result)
+                    ):
+
+                        $description =
+                            $row['description'] ?? '';
+
+                        $sentences =
+                            preg_split(
+                                '/(?<=[.!?])\s+/',
+                                $description,
+                                3
+                            );
+
+                        $preview =
+                            isset($sentences[0])
+                                ? $sentences[0]
+                                : '';
+
+                        if (isset($sentences[1])) {
+                            $preview .=
+                                ' ' . $sentences[1];
+                        }
+
+                    ?>
+
+                        <article
+                            class="gallery-card"
+
+                            style="
+                                animation-delay:
+                                <?php
+                                echo min(
+                                    $index * 0.05,
+                                    0.4
+                                );
+                                ?>s
+                            "
+
+                            data-title="<?php
+                                echo htmlspecialchars(
+                                    strtolower(
+                                        $row['name']
+                                    ),
+                                    ENT_QUOTES
+                                );
+                            ?>"
+
+                            data-content="<?php
+                                echo htmlspecialchars(
+                                    strtolower(
+                                        strip_tags(
+                                            $description
+                                        )
+                                    ),
+                                    ENT_QUOTES
+                                );
+                            ?>"
+                        >
+
+
+                            <!-- IMAGE -->
+
+                            <div class="card-image-wrapper">
+
+                                <img
+                                    src="<?php
+                                        echo htmlspecialchars(
+                                            $row['image_url'],
+                                            ENT_QUOTES
+                                        );
+                                    ?>"
+
+                                    alt="<?php
+                                        echo htmlspecialchars(
+                                            $row['name']
+                                        );
+                                    ?>"
+
+                                    loading="lazy"
+                                >
+
+
+                                <span class="card-badge">
+
+                                    <?php
+                                    echo htmlspecialchars(
+                                        $judul_custom
+                                    );
+                                    ?>
+
+                                </span>
+
+                            </div>
+
+
+                            <!-- CONTENT -->
+
+                            <div class="card-content">
+
+                                <h3>
+                                    <?php
+                                    echo htmlspecialchars(
+                                        $row['name']
+                                    );
+                                    ?>
+                                </h3>
+
+
+                                <p>
+                                    <?php
+                                    echo htmlspecialchars(
+                                        $preview
+                                    );
+                                    ?>
+                                </p>
+
+
+                                <a
+                                    href="detail.php?id=<?php
+                                        echo (int) $row['id'];
+                                    ?>"
+
+                                    class="card-button"
+                                >
+                                    Lihat Detail
+                                </a>
+
+                            </div>
+
+                        </article>
+
+
+                    <?php
+
+                        $index++;
+
+                    endwhile;
+
+                    ?>
+
+
+                <?php else: ?>
+
+
+                    <!-- EMPTY STATE -->
+
+                    <div class="empty-state">
+
+                        <h3>
+                            Belum Ada Konten
+                        </h3>
+
+                        <p>
+
+                            Maaf, belum ada artikel di
+                            kategori
+                            <?php
+                            echo htmlspecialchars(
+                                $judul_custom
+                            );
+                            ?>
+                            saat ini.
+
+                        </p>
+
+
+                        <a
+                            href="index.php"
+                            class="back-to-home"
+                        >
+                            Kembali ke Beranda
+                        </a>
+
+                    </div>
+
+
+                <?php endif; ?>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER GLOBAL
+         Jangan dibuat ulang di halaman ini.
+         ===================================================== -->
+
+    <?php include 'footer.php'; ?>
+
+
+    <!-- =====================================================
+         NAVBAR JAVASCRIPT GLOBAL
+         ===================================================== -->
+
+    <script src="navbar.js"></script>
+
+
+    <!-- =====================================================
+         GALERI SEARCH
+         ===================================================== -->
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const searchInput = document.getElementById('searchInput');
-            const galleryGrid = document.getElementById('galleryGrid');
-            const galleryCards = document.querySelectorAll('.gallery-card');
 
-            function performSearch() {
-                const searchTerm = searchInput.value.toLowerCase().trim();
-                let visibleCount = 0;
+        document.addEventListener(
+            'DOMContentLoaded',
+            function () {
 
-                galleryCards.forEach(card => {
-                    const title = card.getAttribute('data-title');
-                    const content = card.getAttribute('data-content');
+                const searchInput =
+                    document.getElementById(
+                        'searchInput'
+                    );
 
-                    if (searchTerm === '' || title.includes(searchTerm) || content.includes(searchTerm)) {
-                        card.style.display = 'flex';
-                        visibleCount++;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
+                const galleryGrid =
+                    document.getElementById(
+                        'galleryGrid'
+                    );
 
-                const existingNoResults = document.querySelector('.no-results');
-                if (existingNoResults) {
-                    existingNoResults.remove();
+                const galleryCards =
+                    document.querySelectorAll(
+                        '.gallery-card'
+                    );
+
+
+                if (
+                    !searchInput ||
+                    !galleryGrid ||
+                    galleryCards.length === 0
+                ) {
+                    return;
                 }
 
-                if (visibleCount === 0 && searchTerm !== '' && galleryCards.length > 0) {
-                    const noResultsDiv = document.createElement('div');
-                    noResultsDiv.className = 'no-results';
-                    noResultsDiv.innerHTML = `
-                        <h3>🔍 Tidak Ada Hasil</h3>
-                        <p>Coba gunakan kata kunci yang berbeda atau hapus pencarian Anda.</p>
-                    `;
-                    galleryGrid.appendChild(noResultsDiv);
-                }
-            }
 
-            function clearSearch() {
-                searchInput.value = '';
-                performSearch();
-                searchInput.focus();
-            }
+                function performSearch() {
 
-            searchInput.addEventListener('input', performSearch);
-            
-            searchInput.addEventListener('keyup', function (e) {
-                if (e.key === 'Escape') {
-                    clearSearch();
-                }
-            });
+                    const searchTerm =
+                        searchInput.value
+                            .toLowerCase()
+                            .trim();
 
-            // Keyboard shortcut
-            document.addEventListener('keydown', function (e) {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                    e.preventDefault();
-                    searchInput.focus();
-                }
-            });
+                    let visibleCount = 0;
 
-            // Card click navigation
-            galleryCards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    if (e.target.tagName !== 'A') {
-                        const link = this.querySelector('.card-button');
-                        if (link) {
-                            window.location.href = link.href;
+
+                    galleryCards.forEach(
+                        card => {
+
+                            const title =
+                                card.getAttribute(
+                                    'data-title'
+                                ) || '';
+
+                            const content =
+                                card.getAttribute(
+                                    'data-content'
+                                ) || '';
+
+
+                            const matched =
+                                searchTerm === '' ||
+                                title.includes(
+                                    searchTerm
+                                ) ||
+                                content.includes(
+                                    searchTerm
+                                );
+
+
+                            card.style.display =
+                                matched
+                                    ? 'flex'
+                                    : 'none';
+
+
+                            if (matched) {
+                                visibleCount++;
+                            }
+
                         }
+                    );
+
+
+                    const existingNoResults =
+                        galleryGrid.querySelector(
+                            '.no-results'
+                        );
+
+
+                    if (existingNoResults) {
+                        existingNoResults.remove();
                     }
-                });
-            });
-        });
+
+
+                    if (
+                        visibleCount === 0 &&
+                        searchTerm !== ''
+                    ) {
+
+                        const noResultsDiv =
+                            document.createElement(
+                                'div'
+                            );
+
+
+                        noResultsDiv.className =
+                            'no-results';
+
+
+                        noResultsDiv.innerHTML = `
+
+                            <h3>
+                                Tidak Ada Hasil
+                            </h3>
+
+                            <p>
+                                Coba gunakan kata kunci
+                                yang berbeda atau hapus
+                                pencarian Anda.
+                            </p>
+
+                        `;
+
+
+                        galleryGrid.appendChild(
+                            noResultsDiv
+                        );
+
+                    }
+
+                }
+
+
+                function clearSearch() {
+
+                    searchInput.value = '';
+
+                    performSearch();
+
+                    searchInput.focus();
+
+                }
+
+
+                /* Search ketika mengetik */
+
+                searchInput.addEventListener(
+                    'input',
+                    performSearch
+                );
+
+
+                /* Escape untuk clear search */
+
+                searchInput.addEventListener(
+                    'keyup',
+                    function (e) {
+
+                        if (e.key === 'Escape') {
+                            clearSearch();
+                        }
+
+                    }
+                );
+
+
+                /* Ctrl + K / Command + K */
+
+                document.addEventListener(
+                    'keydown',
+                    function (e) {
+
+                        if (
+                            (e.ctrlKey || e.metaKey) &&
+                            e.key.toLowerCase() === 'k'
+                        ) {
+
+                            e.preventDefault();
+
+                            searchInput.focus();
+
+                        }
+
+                    }
+                );
+
+
+                /* Card dapat diklik */
+
+                galleryCards.forEach(
+                    card => {
+
+                        card.addEventListener(
+                            'click',
+                            function (e) {
+
+                                if (
+                                    e.target.closest('a')
+                                ) {
+                                    return;
+                                }
+
+
+                                const link =
+                                    this.querySelector(
+                                        '.card-button'
+                                    );
+
+
+                                if (link) {
+
+                                    window.location.href =
+                                        link.href;
+
+                                }
+
+                            }
+                        );
+
+                    }
+                );
+
+            }
+        );
+
     </script>
 
 </body>
